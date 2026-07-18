@@ -41,6 +41,9 @@ export default function MaterialList() {
 
   useEffect(() => {
     fetchMaterials();
+    const handler = () => fetchMaterials();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, [page, search]);
 
   useEffect(() => {

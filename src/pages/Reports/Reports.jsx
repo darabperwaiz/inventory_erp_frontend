@@ -69,10 +69,17 @@ function InventoryReports() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([reportApi.getCurrentStock(), reportApi.getLowStock()])
-      .then(([stockRes, lowRes]) => { setStock(stockRes.data.data); setLowStock(lowRes.data.data); })
-      .catch(() => toast.error('Failed to load reports'))
-      .finally(() => setLoading(false));
+    const fetchData = () => {
+      setLoading(true);
+      Promise.all([reportApi.getCurrentStock(), reportApi.getLowStock()])
+        .then(([stockRes, lowRes]) => { setStock(stockRes.data.data); setLowStock(lowRes.data.data); })
+        .catch(() => toast.error('Failed to load reports'))
+        .finally(() => setLoading(false));
+    };
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   const handleExport = async (format) => {
@@ -151,9 +158,16 @@ function ProjectReports() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    reportApi.getProjectUsage().then(({ data }) => setUsage(data.data))
-      .catch(() => toast.error('Failed'))
-      .finally(() => setLoading(false));
+    const fetchData = () => {
+      setLoading(true);
+      reportApi.getProjectUsage().then(({ data }) => setUsage(data.data))
+        .catch(() => toast.error('Failed'))
+        .finally(() => setLoading(false));
+    };
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   const handleExport = async (format) => {
@@ -220,6 +234,12 @@ function TransactionReports() {
   };
 
   useEffect(() => { fetchTransactions(); }, [filters]);
+
+  useEffect(() => {
+    const handler = () => fetchTransactions();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
+  }, [filters]);
 
   const handleExport = async (format) => {
     try {

@@ -38,7 +38,8 @@ function AdminDashboard() {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
     Promise.all([
       reportApi.getDashboard(),
       materialApi.getLowStock(),
@@ -51,6 +52,13 @@ function AdminDashboard() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;
@@ -136,8 +144,16 @@ function PMDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
     reportApi.getPMDashboard().then(({ data }) => setData(data.data)).catch(() => {}).finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;
@@ -170,8 +186,16 @@ function InventoryDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
     reportApi.getInventoryDashboard().then(({ data }) => setData(data.data)).catch(() => {}).finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;
@@ -207,8 +231,16 @@ function EngineerDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
     reportApi.getEngineerDashboard().then(({ data }) => setData(data.data)).catch(() => {}).finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;
@@ -245,8 +277,16 @@ function ViewerDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = () => {
+    setLoading(true);
     reportApi.getDashboard().then(({ data }) => setStats(data.data)).catch(() => {}).finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchData();
+    const handler = () => fetchData();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, []);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;

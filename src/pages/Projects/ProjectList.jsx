@@ -46,6 +46,9 @@ export default function ProjectList() {
 
   useEffect(() => {
     fetchProjects();
+    const handler = () => fetchProjects();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
   }, [page, search]);
 
   const handleDelete = async (id) => {

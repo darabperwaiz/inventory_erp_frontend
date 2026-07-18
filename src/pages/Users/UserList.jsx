@@ -61,7 +61,12 @@ export default function UserList() {
     }
   };
 
-  useEffect(() => { fetchUsers(); }, [page, search]);
+  useEffect(() => {
+    fetchUsers();
+    const handler = () => fetchUsers();
+    window.addEventListener('app:refresh', handler);
+    return () => window.removeEventListener('app:refresh', handler);
+  }, [page, search]);
 
   const handleDelete = async (id) => {
     if (!confirm(t('users.deactivate'))) return;

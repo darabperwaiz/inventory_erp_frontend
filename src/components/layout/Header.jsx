@@ -100,8 +100,12 @@ export default function Header() {
     navigate('/login');
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
   const handleRefresh = () => {
-    window.location.reload();
+    setRefreshing(true);
+    window.dispatchEvent(new CustomEvent('app:refresh'));
+    setTimeout(() => setRefreshing(false), 1000);
   };
 
   return (
@@ -115,7 +119,7 @@ export default function Header() {
           className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
           title="Refresh"
         >
-          <RefreshCw size={18} />
+          <RefreshCw size={18} className={refreshing ? 'animate-spin' : ''} />
         </button>
 
         {isInstallable && (
