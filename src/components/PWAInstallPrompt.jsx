@@ -6,11 +6,7 @@ export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('pwa-install-dismissed');
-    if (dismissed) {
-      const daysSinceDismiss = (Date.now() - parseInt(dismissed)) / (1000 * 60 * 60 * 24);
-      if (daysSinceDismiss < 7) return;
-    }
+    if (window.matchMedia('(display-mode: standalone)').matches) return;
 
     const handler = (e) => {
       e.preventDefault();
@@ -42,7 +38,6 @@ export default function PWAInstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
   };
 
   if (!showPrompt || !deferredPrompt) return null;
