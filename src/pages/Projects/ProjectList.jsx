@@ -282,13 +282,13 @@ function ProjectForm({ project, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-slate-200">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 border-b border-slate-200">
           <h3 className="text-lg font-semibold">{project ? t('projects.editProject') : t('projects.newProject')}</h3>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.projectName')} *</label>
               <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" required />
@@ -303,7 +303,7 @@ function ProjectForm({ project, onClose, onSuccess }) {
               <input type="text" value={form.siteName} onChange={(e) => setForm({ ...form, siteName: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.siteAddress')}</label>
               <input type="text" value={form.siteAddress} onChange={(e) => setForm({ ...form, siteAddress: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -354,12 +354,12 @@ function ProjectForm({ project, onClose, onSuccess }) {
               <input type="date" value={form.expectedCompletionDate} onChange={(e) => setForm({ ...form, expectedCompletionDate: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.description')}</label>
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.notes')}</label>
               <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -381,7 +381,7 @@ function ProjectForm({ project, onClose, onSuccess }) {
             ) : (
               <div className="space-y-2">
                 {team.map((member, i) => (
-                  <div key={i} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
+                  <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 p-2 bg-slate-50 rounded-lg">
                     <select value={member.user} onChange={(e) => updateTeamMember(i, 'user', e.target.value)}
                       className="flex-1 px-2 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                       <option value="">{t('projects.selectUser')}</option>

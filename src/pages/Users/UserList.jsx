@@ -81,7 +81,7 @@ export default function UserList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t('users.title')}</h2>
           <p className="text-slate-500 text-sm mt-1">Manage user accounts, roles and access scope</p>
@@ -109,7 +109,7 @@ export default function UserList() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-600">ID</th>
@@ -246,11 +246,11 @@ function UserForm({ user, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-md">
-        <div className="p-6 border-b border-slate-200">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-md">
+        <div className="p-4 sm:p-6 border-b border-slate-200">
           <h3 className="text-lg font-semibold">{user ? t('users.editUser') : t('users.addUser')}</h3>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('users.userName')} *</label>
             <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}

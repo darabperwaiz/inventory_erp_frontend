@@ -41,15 +41,15 @@ export default function ReorderAlerts() {
   const pendingCount = alerts.filter(a => a.hasPendingRequest).length;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 p-4 sm:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
             <AlertTriangle className="text-amber-500" size={24} /> {t('reorder.title')}
           </h2>
           <p className="text-slate-500 text-sm mt-1">{t('reorder.subtitle')}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button onClick={fetchAlerts} disabled={loading}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 text-sm disabled:opacity-50">
             <RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Refresh
@@ -61,7 +61,7 @@ export default function ReorderAlerts() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
           <div className="text-sm text-amber-600">{t('reorder.lowStockMaterials')}</div>
           <div className="text-2xl font-bold text-amber-700">{alerts.length}</div>
@@ -70,7 +70,7 @@ export default function ReorderAlerts() {
           <div className="text-sm text-red-600">{t('reorder.totalShortage')}</div>
           <div className="text-2xl font-bold text-red-700">{totalShortage}</div>
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 col-span-2 sm:col-span-1">
           <div className="text-sm text-blue-600">{t('reorder.pendingRequests')}</div>
           <div className="text-2xl font-bold text-blue-700">{pendingCount}</div>
         </div>
@@ -78,7 +78,7 @@ export default function ReorderAlerts() {
 
       <div className="bg-white rounded-xl border border-slate-200">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[500px]">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-600">Material</th>

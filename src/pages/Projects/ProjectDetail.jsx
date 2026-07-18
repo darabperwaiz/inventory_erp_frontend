@@ -337,9 +337,9 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg">
-        <div className="p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.assignMaterial')}</h3></div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg">
+        <div className="p-4 sm:p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.assignMaterial')}</h3></div>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.material')} *</label>
             <select value={form.materialId} onChange={(e) => setForm({ ...form, materialId: e.target.value })}
@@ -348,7 +348,7 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
               {allMaterials.map((m) => <option key={m._id} value={m._id}>{m.materialCode} - {m.name} ({t('projects.available')}: {m.availableQuantity})</option>)}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.quantity')} *</label>
               <input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })}
@@ -375,7 +375,7 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
             <textarea value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} rows={2}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
               {loading ? t('projects.assigning') : t('projects.assign')}
@@ -407,9 +407,9 @@ function InstallModal({ materials, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg">
-        <div className="p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.recordInstallation')}</h3></div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg">
+        <div className="p-4 sm:p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.recordInstallation')}</h3></div>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.material')} *</label>
             <select value={form.projectMaterialId} onChange={(e) => setForm({ ...form, projectMaterialId: e.target.value })}
@@ -420,7 +420,7 @@ function InstallModal({ materials, onClose, onSuccess }) {
               ))}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.installationDate')}</label>
               <input type="date" value={form.installationDate} onChange={(e) => setForm({ ...form, installationDate: e.target.value })}
@@ -442,7 +442,7 @@ function InstallModal({ materials, onClose, onSuccess }) {
             <textarea value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} rows={2}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700 disabled:opacity-50">
               {loading ? t('projects.recording') : t('projects.record')}
@@ -474,9 +474,9 @@ function ReturnModal({ materials, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg">
-        <div className="p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.returnMaterial')}</h3></div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg">
+        <div className="p-4 sm:p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.returnMaterial')}</h3></div>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.material')} *</label>
             <select value={form.projectMaterialId} onChange={(e) => setForm({ ...form, projectMaterialId: e.target.value })}
@@ -487,7 +487,7 @@ function ReturnModal({ materials, onClose, onSuccess }) {
               ))}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.returnDate')}</label>
               <input type="date" value={form.returnDate} onChange={(e) => setForm({ ...form, returnDate: e.target.value })}
@@ -509,7 +509,7 @@ function ReturnModal({ materials, onClose, onSuccess }) {
             <textarea value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} rows={2}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700 disabled:opacity-50">
               {loading ? t('projects.returning') : t('projects.return')}
@@ -544,9 +544,9 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg">
-        <div className="p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.transferMaterial')}</h3></div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg">
+        <div className="p-4 sm:p-6 border-b border-slate-200"><h3 className="text-lg font-semibold">{t('projects.transferMaterial')}</h3></div>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.destinationProject')} *</label>
             <select value={form.destinationProjectId} onChange={(e) => setForm({ ...form, destinationProjectId: e.target.value })}
@@ -565,7 +565,7 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
               ))}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.quantity')} *</label>
               <input type="number" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })}
@@ -582,7 +582,7 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
             <textarea value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} rows={2}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-2 bg-cyan-600 text-white rounded-lg text-sm hover:bg-cyan-700 disabled:opacity-50">
               {loading ? t('projects.transferring') : t('projects.transfer')}
@@ -617,12 +617,12 @@ function RequestMaterialModal({ projectId, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-md" onClick={(e) => e.stopPropagation()}>
+        <div className="px-4 py-3 sm:px-5 border-b border-slate-200 flex items-center justify-between">
           <h3 className="text-lg font-semibold">{t('projects.requestMaterial')}</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
         </div>
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.material')} *</label>
             <select value={form.materialId} onChange={(e) => setForm({ ...form, materialId: e.target.value })} required
@@ -633,7 +633,7 @@ function RequestMaterialModal({ projectId, onClose, onSuccess }) {
               ))}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.quantity')} *</label>
               <input type="number" min="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} required
@@ -655,7 +655,7 @@ function RequestMaterialModal({ projectId, onClose, onSuccess }) {
               placeholder={t('projects.whyNeeded')}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-2">
             <button type="button" onClick={onClose} className="px-4 py-1.5 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-1.5 bg-amber-600 text-white rounded-lg text-sm hover:bg-amber-700 disabled:opacity-50">
               {loading ? t('projects.submitting') : t('projects.submitRequest')}

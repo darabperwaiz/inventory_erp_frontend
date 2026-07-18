@@ -43,7 +43,7 @@ export default function AuditLogs() {
         <p className="text-slate-500 text-sm mt-1">{t('audit.subtitle')}</p>
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <input
           type="text"
           placeholder={t('audit.searchLogs')}
@@ -65,7 +65,7 @@ export default function AuditLogs() {
 
       <div className="bg-white rounded-xl border border-slate-200">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[500px] text-sm">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-600">Date</th>
@@ -103,7 +103,7 @@ export default function AuditLogs() {
         </div>
 
         {pagination.pages > 1 && (
-          <div className="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div className="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
             <span className="text-sm text-slate-500">
               Page {pagination.page} of {pagination.pages} ({pagination.total} total)
             </span>

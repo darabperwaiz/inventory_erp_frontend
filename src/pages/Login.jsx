@@ -29,9 +29,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-full sm:max-w-md">
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-8">
           <div className="flex flex-col items-center mb-8">
             <div className="w-14 h-14 bg-blue-600 rounded-xl flex items-center justify-center mb-4">
               <Package className="text-white" size={28} />

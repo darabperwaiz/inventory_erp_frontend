@@ -23,12 +23,12 @@ export default function Settings() {
         <p className="text-slate-500 text-sm mt-1">System configuration and preferences</p>
       </div>
 
-      <div className="flex gap-2 border-b border-slate-200">
+      <div className="flex flex-wrap gap-2 border-b border-slate-200">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+            className={`flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 -mb-px whitespace-nowrap ${
               activeTab === tab.id ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'
             }`}
           >
@@ -75,7 +75,7 @@ function GeneralSettings() {
   if (fetching) return <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-2xl text-center text-slate-400">Loading...</div>;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-2xl">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 max-w-2xl">
       <h3 className="font-semibold text-slate-800 mb-4">{t('settings.general')}</h3>
       <div className="space-y-4">
         <div>
@@ -83,7 +83,7 @@ function GeneralSettings() {
           <input type="text" value={settings.companyName} onChange={(e) => setSettings({ ...settings, companyName: e.target.value })}
             className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('settings.currency')}</label>
             <select value={settings.currency} onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
@@ -146,10 +146,10 @@ function NotificationSettings() {
     } finally { setLoading(false); }
   };
 
-  if (fetching) return <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-2xl text-center text-slate-400">Loading...</div>;
+  if (fetching) return <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 max-w-2xl text-center text-slate-400">Loading...</div>;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-2xl">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 max-w-2xl">
       <h3 className="font-semibold text-slate-800 mb-4">{t('settings.notifications')}</h3>
       <div className="space-y-4">
         {[
@@ -242,7 +242,7 @@ function EmailSettings() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-6 max-w-2xl">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6 max-w-2xl">
       <h3 className="font-semibold text-slate-800 mb-4">{t('settings.email')} Configuration</h3>
       <div className="space-y-4">
         <div>
@@ -265,7 +265,7 @@ function EmailSettings() {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('settings.smtpHost')}</label>
             <input type="text" value={settings.smtpHost} onChange={(e) => setSettings({ ...settings, smtpHost: e.target.value })}
@@ -350,9 +350,9 @@ function SecuritySettings() {
 
   return (
     <div className="space-y-6 max-w-2xl">
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
         <h3 className="font-semibold text-slate-800 mb-4">{t('settings.userStatistics')}</h3>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-blue-50 rounded-lg p-4 text-center">
             <div className="text-2xl font-bold text-blue-600">{stats?.totalUsers || 0}</div>
             <div className="text-xs text-slate-500">Total Users</div>
@@ -368,7 +368,7 @@ function SecuritySettings() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
         <h3 className="font-semibold text-slate-800 mb-4">{t('settings.securityInfo')}</h3>
         <div className="space-y-3 text-sm">
           <div className="flex justify-between p-3 bg-slate-50 rounded-lg">

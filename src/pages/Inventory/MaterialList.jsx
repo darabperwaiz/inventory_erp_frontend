@@ -128,12 +128,12 @@ export default function MaterialList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t('inventory.title')}</h2>
           <p className="text-slate-500 text-sm mt-1">{t('inventory.subtitle')}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <button
             onClick={() => setShowReceive(true)}
             className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
@@ -150,9 +150,9 @@ export default function MaterialList() {
       </div>
 
       {selected.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-center justify-between">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <span className="text-sm text-blue-700 font-medium">{t('app.selected', { count: selected.length })}</span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={() => handleExportSelected('pdf')} className="px-3 py-1.5 bg-white border border-blue-300 text-blue-700 rounded-lg text-xs hover:bg-blue-100">
               {t('inventory.exportPDF')}
             </button>
@@ -190,7 +190,7 @@ export default function MaterialList() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[800px]">
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="text-left px-4 py-3 font-medium text-slate-600 w-10">
@@ -311,11 +311,11 @@ export default function MaterialList() {
         </div>
 
         {pagination.pages > 1 && (
-          <div className="p-4 border-t border-slate-200 flex items-center justify-between">
+          <div className="p-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2">
             <span className="text-sm text-slate-500">
               {t('app.showing')} {((page - 1) * 10) + 1} {t('app.of')} {Math.min(page * 10, pagination.total)} {t('app.of')} {pagination.total}
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-1 flex-wrap justify-center">
               {Array.from({ length: pagination.pages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
@@ -349,7 +349,7 @@ export default function MaterialList() {
 
       {qrImage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => { setQrImage(null); setQrMaterial(null); }}>
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-full sm:max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-slate-800">{t('inventory.qrCode')}</h3>
               <button onClick={() => { setQrImage(null); setQrMaterial(null); }} className="text-slate-400 hover:text-slate-600">
@@ -375,7 +375,7 @@ export default function MaterialList() {
 
       {barcodeImage && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => { setBarcodeImage(null); setBarcodeMaterial(null); }}>
-          <div className="bg-white rounded-xl p-6 max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl p-4 sm:p-6 max-w-full sm:max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-slate-800">{t('inventory.barcode')}</h3>
               <button onClick={() => { setBarcodeImage(null); setBarcodeMaterial(null); }} className="text-slate-400 hover:text-slate-600">
@@ -441,12 +441,12 @@ function AdjustStockModal({ material, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-md" onClick={(e) => e.stopPropagation()}>
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="text-lg font-semibold">{t('inventory.adjustStock')}</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
         </div>
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
           <div className="bg-slate-50 rounded-lg p-3">
             <div className="text-sm font-medium text-slate-800">{material.name}</div>
             <div className="text-xs text-slate-500">{material.materialCode} — {t('inventory.availableQuantity')}: <span className="font-bold">{material.availableQuantity}</span> {material.unit}</div>
@@ -486,7 +486,7 @@ function AdjustStockModal({ material, onClose, onSuccess }) {
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
           )}
-          <div className="flex justify-end gap-2 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} className="px-4 py-1.5 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
               {loading ? t('app.processing') : t('inventory.confirmAdjustment')}
@@ -568,14 +568,14 @@ function MaterialForm({ material, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-2xl">
-        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-2xl">
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="text-lg font-semibold">{material ? t('inventory.editMaterial') : t('inventory.addMaterial')}</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
         </div>
-        <form onSubmit={handleSubmit} className="p-5">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5">
           <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-3 flex flex-col items-center">
+            <div className="col-span-12 sm:col-span-3 flex flex-col items-center">
               {imagePreview ? (
                 <div className="relative">
                   <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded-lg border border-slate-200" />
@@ -592,7 +592,7 @@ function MaterialForm({ material, onClose, onSuccess }) {
                 </label>
               )}
             </div>
-            <div className="col-span-9 grid grid-cols-3 gap-3">
+            <div className="col-span-12 sm:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('inventory.materialName')} *</label>
                 <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -636,14 +636,14 @@ function MaterialForm({ material, onClose, onSuccess }) {
                   <option value="discontinued">{t('inventory.discontinued')}</option>
                 </select>
               </div>
-              <div className="col-span-3">
+              <div className="col-span-1 sm:col-span-2 lg:col-span-3">
                 <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('inventory.description')}</label>
                 <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
               </div>
             </div>
           </div>
-          <div className="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
             <button type="button" onClick={onClose} className="px-4 py-1.5 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
             <button type="submit" disabled={loading} className="px-4 py-1.5 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
               {loading ? t('app.saving') : t('app.save')}
@@ -689,11 +689,11 @@ function ReceiveMaterial({ onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg">
-        <div className="p-6 border-b border-slate-200">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg">
+        <div className="p-4 sm:p-6 border-b border-slate-200">
           <h3 className="text-lg font-semibold">{t('inventory.receiveMaterial')}</h3>
         </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('inventory.materialName')} *</label>
             <select
@@ -708,7 +708,7 @@ function ReceiveMaterial({ onClose, onSuccess }) {
               ))}
             </select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('inventory.quantity')} *</label>
               <input
@@ -766,7 +766,7 @@ function ReceiveMaterial({ onClose, onSuccess }) {
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
-          <div className="flex justify-end gap-3 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4">
             <button type="button" onClick={onClose} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">
               {t('app.cancel')}
             </button>
@@ -845,12 +845,12 @@ function PrintLabelsModal({ materials, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
-        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg" onClick={(e) => e.stopPropagation()}>
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between">
           <h3 className="text-lg font-semibold flex items-center gap-2"><Printer size={18} /> {t('inventory.printLabels')}</h3>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
         </div>
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           <p className="text-sm text-slate-600 mb-4">{t('inventory.labelsReady', { count: materials.length })}</p>
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {materials.map(m => (
