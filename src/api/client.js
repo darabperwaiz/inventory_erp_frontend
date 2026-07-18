@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const isElectron = window?.electron?.isElectron;
-const baseURL = '/api';
-const API_BASE = '';
+const baseURL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 const client = axios.create({
   baseURL,
@@ -33,7 +33,8 @@ client.interceptors.response.use(
     if (error.response?.status === 401 && error.response?.data?.tokenExpired && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const { data } = await axios.post('/api/auth/refresh', {
+        const refreshBaseURL = import.meta.env.VITE_API_URL || '/api';
+        const { data } = await axios.post(`${refreshBaseURL}/auth/refresh`, {
           refreshToken: localStorage.getItem('refreshToken'),
         });
         setAccessToken(data.data.accessToken);
