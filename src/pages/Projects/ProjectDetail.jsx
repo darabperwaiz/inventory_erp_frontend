@@ -22,7 +22,6 @@ export default function ProjectDetail() {
   const { id } = useParams();
   const [project, setProject] = useState(null);
   const [materials, setMaterials] = useState([]);
-  const [summary, setSummary] = useState(null);
   const [timeline, setTimeline] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAssign, setShowAssign] = useState(false);
@@ -75,7 +74,6 @@ export default function ProjectDetail() {
         projectApi.getTimeline(id),
       ]);
       setProject(dashRes.data.data.project);
-      setSummary(dashRes.data.data.materialSummary);
       setMaterials(matRes.data.data);
       setTimeline(timeRes.data.data);
       fetchFiles();
@@ -195,18 +193,6 @@ export default function ProjectDetail() {
         </div>
 
         <div className="space-y-6">
-          {summary && (
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h3 className="font-semibold text-slate-800 mb-4">{t('projects.materialSummary')}</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm"><span className="text-slate-500">{t('projects.totalAssigned')}</span><span className="font-medium">{summary.totalAssigned}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-slate-500">{t('projects.totalInstalled')}</span><span className="font-medium text-emerald-600">{summary.totalInstalled}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-slate-500">{t('projects.totalReturned')}</span><span className="font-medium text-purple-600">{summary.totalReturned}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-slate-500">{t('projects.totalTransferred')}</span><span className="font-medium text-cyan-600">{summary.totalTransferred}</span></div>
-              </div>
-            </div>
-          )}
-
           <div className="bg-white rounded-xl border border-slate-200 p-6">
             <h3 className="font-semibold text-slate-800 mb-4">{t('projects.team')}</h3>
             <div className="space-y-2">
