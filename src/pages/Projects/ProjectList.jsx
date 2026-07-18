@@ -228,7 +228,7 @@ function ProjectForm({ project, onClose, onSuccess }) {
   }, []);
 
   const addTeamMember = () => {
-    setTeam([...team, { user: '', role: 'team_member', name: '' }]);
+    setTeam([...team, { user: '', role: '', name: '' }]);
   };
 
   const removeTeamMember = (index) => {
@@ -241,6 +241,7 @@ function ProjectForm({ project, onClose, onSuccess }) {
     if (field === 'user') {
       const u = users.find((u) => u._id === value);
       updated[index].name = u?.name || '';
+      updated[index].role = u?.role || 'team_member';
     }
     setTeam(updated);
   };
@@ -269,10 +270,11 @@ function ProjectForm({ project, onClose, onSuccess }) {
   };
 
   const teamRoleColors = {
+    admin: 'bg-red-100 text-red-700',
     project_manager: 'bg-blue-100 text-blue-700',
-    site_engineer: 'bg-amber-100 text-amber-700',
     inventory_manager: 'bg-emerald-100 text-emerald-700',
-    team_member: 'bg-slate-100 text-slate-600',
+    site_engineer: 'bg-amber-100 text-amber-700',
+    viewer: 'bg-slate-100 text-slate-600',
   };
 
   return (
@@ -384,13 +386,11 @@ function ProjectForm({ project, onClose, onSuccess }) {
                         <option key={u._id} value={u._id}>{u.name} ({u.role?.replace('_', ' ')})</option>
                       ))}
                     </select>
-                    <select value={member.role} onChange={(e) => updateTeamMember(i, 'role', e.target.value)}
-                      className={`px-2 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none`}>
-                      <option value="project_manager">{t('projects.projectManager')}</option>
-                      <option value="site_engineer">{t('projects.siteEngineer')}</option>
-                      <option value="inventory_manager">{t('projects.inventoryManager')}</option>
-                      <option value="team_member">{t('projects.teamMember')}</option>
-                    </select>
+                    {member.user && (
+                      <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${teamRoleColors[member.role] || teamRoleColors.viewer}`}>
+                        {member.role?.replace('_', ' ')}
+                      </span>
+                    )}
                     <button type="button" onClick={() => removeTeamMember(i)}
                       className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded">
                       <Trash2 size={14} />
