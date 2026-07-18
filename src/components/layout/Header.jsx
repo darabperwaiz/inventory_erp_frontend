@@ -109,11 +109,11 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+    <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 flex items-center justify-between">
       <div>
-        <h1 className="text-lg font-semibold text-slate-800">{t('app.title')}</h1>
+        <h1 className="text-base sm:text-lg font-semibold text-slate-800 truncate max-w-[150px] sm:max-w-none">{t('app.title')}</h1>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1 sm:gap-2">
         <button
           onClick={handleRefresh}
           className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
@@ -125,7 +125,7 @@ export default function Header() {
         {isInstallable && (
           <button
             onClick={handleInstall}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
             title="Install App"
           >
             <Download size={16} />

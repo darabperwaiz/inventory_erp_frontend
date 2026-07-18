@@ -43,8 +43,8 @@ export default function PWAInstallPrompt() {
   if (!showPrompt || !deferredPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-[100] max-w-sm w-full">
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-5 animate-slide-up">
+    <div className="fixed bottom-20 lg:bottom-4 right-4 z-[100] max-w-sm w-[calc(100%-2rem)]">
+      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 p-4 sm:p-5 animate-slide-up">
         <button
           onClick={handleDismiss}
           className="absolute top-3 right-3 p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
