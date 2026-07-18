@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import useAuthStore from './store/authStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MaterialList from './pages/Inventory/MaterialList';
@@ -36,6 +37,7 @@ function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-right" />
+      <PWAInstallPrompt />
       <div>
       <Routes>
         <Route path="/login" element={<Login />} />
