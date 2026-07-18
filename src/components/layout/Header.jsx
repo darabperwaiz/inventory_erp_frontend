@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { LogOut, Bell, Check, Trash2, X, Download } from 'lucide-react';
+import { LogOut, Bell, Check, Trash2, X, Download, RefreshCw } from 'lucide-react';
 import useAuthStore from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import { notificationApi } from '../../api/notification.api';
@@ -100,12 +100,24 @@ export default function Header() {
     navigate('/login');
   };
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
       <div>
         <h1 className="text-lg font-semibold text-slate-800">{t('app.title')}</h1>
       </div>
       <div className="flex items-center gap-2">
+        <button
+          onClick={handleRefresh}
+          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+          title="Refresh"
+        >
+          <RefreshCw size={18} />
+        </button>
+
         {isInstallable && (
           <button
             onClick={handleInstall}
