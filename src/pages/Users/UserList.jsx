@@ -20,6 +20,24 @@ const roleKeys = {
   viewer: 'users.viewer',
 };
 
+const scopeColors = {
+  global: 'bg-purple-100 text-purple-700',
+  project_specific: 'bg-blue-100 text-blue-700',
+  company: 'bg-orange-100 text-orange-700',
+};
+
+const scopeLabels = {
+  global: 'Global',
+  project_specific: 'Project Specific',
+  company: 'Company',
+};
+
+const scopeTranslationKeys = {
+  global: 'users.scopeGlobal',
+  project_specific: 'users.scopeProjectSpecific',
+  company: 'users.scopeCompany',
+};
+
 export default function UserList() {
   const { t } = useTranslation();
   const [users, setUsers] = useState([]);
@@ -61,7 +79,7 @@ export default function UserList() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t('users.title')}</h2>
-          <p className="text-slate-500 text-sm mt-1">Manage user accounts and roles</p>
+          <p className="text-slate-500 text-sm mt-1">Manage user accounts, roles and access scope</p>
         </div>
         <button
           onClick={() => { setEditingUser(null); setShowForm(true); }}
@@ -93,15 +111,16 @@ export default function UserList() {
                 <th className="text-left px-4 py-3 font-medium text-slate-600">{t('users.userName')}</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">{t('users.userEmail')}</th>
                 <th className="text-center px-4 py-3 font-medium text-slate-600">{t('users.userRole')}</th>
+                <th className="text-center px-4 py-3 font-medium text-slate-600">Scope</th>
                 <th className="text-center px-4 py-3 font-medium text-slate-600">Status</th>
                 <th className="text-right px-4 py-3 font-medium text-slate-600">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="6" className="text-center py-8 text-slate-400">Loading...</td></tr>
+                <tr><td colSpan="7" className="text-center py-8 text-slate-400">Loading...</td></tr>
               ) : users.length === 0 ? (
-                <tr><td colSpan="6" className="text-center py-8 text-slate-400">No users found</td></tr>
+                <tr><td colSpan="7" className="text-center py-8 text-slate-400">No users found</td></tr>
               ) : (
                 users.map((u) => (
                   <tr key={u._id} className="border-b border-slate-100 hover:bg-slate-50">
@@ -111,6 +130,11 @@ export default function UserList() {
                     <td className="px-4 py-3 text-center">
                       <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${roleColors[u.role]}`}>
                         {t(roleKeys[u.role] || u.role)}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${scopeColors[u.scope] || scopeColors.project_specific}`}>
+                        {t(scopeTranslationKeys[u.scope] || scopeTranslationKeys.project_specific)}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -183,6 +207,7 @@ function UserForm({ user, onClose, onSuccess }) {
     email: user?.email || '',
     password: '',
     role: user?.role || 'viewer',
+    scope: user?.scope || 'project_specific',
     phone: user?.phone || '',
   });
   const [loading, setLoading] = useState(false);
@@ -204,6 +229,14 @@ function UserForm({ user, onClose, onSuccess }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const scopeOptions = {
+    admin: ['global'],
+    project_manager: ['global', 'project_specific'],
+    inventory_manager: ['global', 'project_specific', 'company'],
+    site_engineer: ['global', 'project_specific'],
+    viewer: ['global', 'project_specific'],
   };
 
   return (
@@ -232,7 +265,7 @@ function UserForm({ user, onClose, onSuccess }) {
           )}
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('users.userRole')} *</label>
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}
+            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value, scope: scopeOptions[e.target.value]?.includes(form.scope) ? form.scope : scopeOptions[e.target.value]?.[0] || 'project_specific' })}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
               <option value="admin">{t('users.admin')}</option>
               <option value="project_manager">{t('users.projectManager')}</option>
@@ -240,6 +273,20 @@ function UserForm({ user, onClose, onSuccess }) {
               <option value="site_engineer">{t('users.siteEngineer')}</option>
               <option value="viewer">{t('users.viewer')}</option>
             </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Access Scope *</label>
+            <select value={form.scope} onChange={(e) => setForm({ ...form, scope: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              {(scopeOptions[form.role] || ['project_specific']).map((s) => (
+                <option key={s} value={s}>{scopeLabels[s]}</option>
+              ))}
+            </select>
+            <p className="text-xs text-slate-500 mt-1">
+              {form.scope === 'global' && 'Can access all projects and inventory across the organization'}
+              {form.scope === 'project_specific' && 'Can only access assigned projects'}
+              {form.scope === 'company' && 'Can access company-level inventory only'}
+            </p>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>

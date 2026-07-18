@@ -42,7 +42,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
-            urlPattern: /^https?:\/\/localhost:5000\/api\/.*/i,
+            urlPattern: /^https?:\/\/(localhost:5000|inventoryapi\.dotcomdotin\.com)\/api\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
@@ -57,7 +57,7 @@ export default defineConfig({
             }
           },
           {
-            urlPattern: /^https?:\/\/localhost:5000\/uploads\/.*/i,
+            urlPattern: /^https?:\/\/(localhost:5000|inventoryapi\.dotcomdotin\.com)\/uploads\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'images-cache',

@@ -339,6 +339,13 @@
     "inventoryManager": "Inventory Manager / مدير المخزون",
     "siteEngineer": "Site Engineer / مهندس الموقع",
     "viewer": "Viewer / مشاهد",
+    "scope": "Access Scope / نطاق الوصول",
+    "scopeGlobal": "Global / عالمي",
+    "scopeProjectSpecific": "Project Specific / خاص بالمشروع",
+    "scopeCompany": "Company / الشركة",
+    "scopeDescGlobal": "Can access all projects and inventory across the organization / يمكن الوصول لجميع المشاريع والمخزون عبر المنظمة",
+    "scopeDescProjectSpecific": "Can only access assigned projects / يمكن الوصول للمشاريع المخصصة فقط",
+    "scopeDescCompany": "Can access company-level inventory only / يمكن الوصول لمخزون الشركة فقط",
     "deactivate": "Deactivate / تعطيل",
     "searchUsers": "Search users... / بحث في المستخدمين..."
   },
