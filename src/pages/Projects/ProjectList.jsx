@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, FolderKanban, Edit2, Trash2, Eye, Users } from 'lucide-react';
+import { Plus, Search, FolderKanban, Edit2, Trash2, Eye, Users, LayoutGrid, List, Calendar, MapPin } from 'lucide-react';
 import { projectApi } from '../../api/project.api';
 import { userApi } from '../../api/user.api';
 import { Link } from 'react-router-dom';
@@ -30,6 +30,12 @@ export default function ProjectList() {
   const [pagination, setPagination] = useState({});
   const [showForm, setShowForm] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [viewMode, setViewMode] = useState(() => localStorage.getItem('projectsViewMode') || 'list');
+
+  const toggleView = (mode) => {
+    setViewMode(mode);
+    localStorage.setItem('projectsViewMode', mode);
+  };
 
   const fetchProjects = async () => {
     try {
@@ -64,17 +70,35 @@ export default function ProjectList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">{t('projects.title')}</h2>
           <p className="text-slate-500 text-sm mt-1">{t('projects.manageYourProjects')}</p>
         </div>
-        <button
-          onClick={() => { setEditingProject(null); setShowForm(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
-        >
-          <Plus size={16} /> {t('projects.newProject')}
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center bg-slate-100 rounded-lg p-1">
+            <button
+              onClick={() => toggleView('list')}
+              className={`p-1.5 rounded-md transition-colors ${viewMode === 'list' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              title="List view"
+            >
+              <List size={16} />
+            </button>
+            <button
+              onClick={() => toggleView('grid')}
+              className={`p-1.5 rounded-md transition-colors ${viewMode === 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+              title="Grid view"
+            >
+              <LayoutGrid size={16} />
+            </button>
+          </div>
+          <button
+            onClick={() => { setEditingProject(null); setShowForm(true); }}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+          >
+            <Plus size={16} /> <span className="hidden sm:inline">{t('projects.newProject')}</span>
+          </button>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200">
@@ -91,80 +115,145 @@ export default function ProjectList() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50">
-                <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.projectID')}</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.name')}</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.clientName')}</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.siteName')}</th>
-                <th className="text-center px-4 py-3 font-medium text-slate-600">{t('projects.team')}</th>
-                <th className="text-center px-4 py-3 font-medium text-slate-600">{t('app.status')}</th>
-                <th className="text-center px-4 py-3 font-medium text-slate-600">{t('projects.priority')}</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.startDate')}</th>
-                <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-              <tr><td colSpan="9" className="text-center py-8 text-slate-400">{t('app.loading')}</td></tr>
-              ) : projects.length === 0 ? (
-              <tr><td colSpan="9" className="text-center py-8 text-slate-400">{t('app.noData')}</td></tr>
-              ) : (
-                projects.map((p) => (
-                  <tr key={p._id} className="border-b border-slate-100 hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-xs text-slate-500">{p.projectId}</td>
-                    <td className="px-4 py-3 font-medium text-slate-800">{p.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{p.clientName || '-'}</td>
-                    <td className="px-4 py-3 text-slate-600">{p.siteName || '-'}</td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <Users size={12} className="text-slate-400" />
-                        <span className="text-sm text-slate-600">{p.assignedTeam?.length || 0}</span>
+        {viewMode === 'list' ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[700px]">
+              <thead>
+                <tr className="border-b border-slate-200 bg-slate-50">
+                  <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.projectID')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.name')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.clientName')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.siteName')}</th>
+                  <th className="text-center px-4 py-3 font-medium text-slate-600">{t('projects.team')}</th>
+                  <th className="text-center px-4 py-3 font-medium text-slate-600">{t('app.status')}</th>
+                  <th className="text-center px-4 py-3 font-medium text-slate-600">{t('projects.priority')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.startDate')}</th>
+                  <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.actions')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr><td colSpan="9" className="text-center py-8 text-slate-400">{t('app.loading')}</td></tr>
+                ) : projects.length === 0 ? (
+                  <tr><td colSpan="9" className="text-center py-8 text-slate-400">{t('app.noData')}</td></tr>
+                ) : (
+                  projects.map((p) => (
+                    <tr key={p._id} className="border-b border-slate-100 hover:bg-slate-50">
+                      <td className="px-4 py-3 font-mono text-xs text-slate-500">{p.projectId}</td>
+                      <td className="px-4 py-3 font-medium text-slate-800">{p.name}</td>
+                      <td className="px-4 py-3 text-slate-600">{p.clientName || '-'}</td>
+                      <td className="px-4 py-3 text-slate-600">{p.siteName || '-'}</td>
+                      <td className="px-4 py-3 text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Users size={12} className="text-slate-400" />
+                          <span className="text-sm text-slate-600">{p.assignedTeam?.length || 0}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[p.status]}`}>
+                          {p.status?.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[p.priority]}`}>
+                          {p.priority}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">
+                        {p.startDate ? new Date(p.startDate).toLocaleDateString() : '-'}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Link to={`/projects/${p._id}`} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
+                            <Eye size={14} />
+                          </Link>
+                          <button onClick={() => { setEditingProject(p); setShowForm(true); }}
+                            className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
+                            <Edit2 size={14} />
+                          </button>
+                          <button onClick={() => handleDelete(p._id)}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="p-4">
+            {loading ? (
+              <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>
+            ) : projects.length === 0 ? (
+              <div className="text-center py-8 text-slate-400">{t('app.noData')}</div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {projects.map((p) => (
+                  <div key={p._id} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1 min-w-0">
+                        <Link to={`/projects/${p._id}`} className="text-sm font-semibold text-slate-800 hover:text-blue-600 truncate block">
+                          {p.name}
+                        </Link>
+                        <div className="text-xs text-slate-400 font-mono mt-0.5">{p.projectId}</div>
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[p.status]}`}>
-                        {p.status?.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[p.priority]}`}>
-                        {p.priority}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600 text-xs">
-                      {p.startDate ? new Date(p.startDate).toLocaleDateString() : '-'}
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Link
-                          to={`/projects/${p._id}`}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded"
-                        >
+                      <div className="flex gap-1 ml-2 flex-shrink-0">
+                        <Link to={`/projects/${p._id}`} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                           <Eye size={14} />
                         </Link>
-                        <button
-                          onClick={() => { setEditingProject(p); setShowForm(true); }}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded"
-                        >
+                        <button onClick={() => { setEditingProject(p); setShowForm(true); }}
+                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                           <Edit2 size={14} />
                         </button>
-                        <button
-                          onClick={() => handleDelete(p._id)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded"
-                        >
+                        <button onClick={() => handleDelete(p._id)}
+                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
                           <Trash2 size={14} />
                         </button>
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                    </div>
+
+                    {p.clientName && (
+                      <div className="text-xs text-slate-500 mb-2 truncate">{p.clientName}</div>
+                    )}
+
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium ${statusColors[p.status]}`}>
+                        {p.status?.replace('_', ' ')}
+                      </span>
+                      <span className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium ${priorityColors[p.priority]}`}>
+                        {p.priority}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+                      <div className="flex items-center gap-3">
+                        {p.siteName && (
+                          <span className="flex items-center gap-1 truncate max-w-[100px]">
+                            <MapPin size={11} className="text-slate-400 flex-shrink-0" />
+                            <span className="truncate">{p.siteName}</span>
+                          </span>
+                        )}
+                        {p.startDate && (
+                          <span className="flex items-center gap-1">
+                            <Calendar size={11} className="text-slate-400" />
+                            {new Date(p.startDate).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users size={11} className="text-slate-400" />
+                        <span>{p.assignedTeam?.length || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {pagination.pages > 1 && (
           <div className="p-4 border-t border-slate-200 flex items-center justify-between">
