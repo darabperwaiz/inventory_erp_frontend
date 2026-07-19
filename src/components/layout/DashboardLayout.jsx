@@ -1,8 +1,38 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
+const routeTitles = {
+  '/': 'Dashboard',
+  '/projects': 'Projects',
+  '/inventory': 'Inventory',
+  '/reports': 'Reports',
+  '/approvals': 'Approvals',
+  '/users': 'Users',
+  '/audit-logs': 'Audit Logs',
+  '/reorder-alerts': 'Reorder Alerts',
+  '/settings': 'Settings',
+};
+
 export default function DashboardLayout() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname;
+    let title = 'ERP System';
+
+    if (routeTitles[path]) {
+      title = `${routeTitles[path]} | ERP System`;
+    } else if (path.startsWith('/projects/')) {
+      title = 'Project Detail | ERP System';
+    } else if (path.match(/\/inventory\/[^/]+\/history/)) {
+      title = 'Material History | ERP System';
+    }
+
+    document.title = title;
+  }, [location.pathname]);
+
   return (
     <div className="flex h-screen bg-slate-50">
       <Sidebar />
