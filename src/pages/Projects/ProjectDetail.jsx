@@ -91,13 +91,13 @@ export default function ProjectDetail() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link to="/projects" className="p-2 hover:bg-slate-100 rounded-lg">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <Link to="/projects" className="p-2 hover:bg-slate-100 rounded-lg flex-shrink-0">
           <ArrowLeft size={20} className="text-slate-600" />
         </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-slate-800">{project.name}</h2>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 truncate">{project.name}</h2>
             <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[project.status]}`}>
               {project.status?.replace('_', ' ')}
             </span>
@@ -108,45 +108,47 @@ export default function ProjectDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
             <h3 className="font-semibold text-slate-800 mb-4">{t('projects.projectInformation')}</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div><span className="text-slate-500">{t('projects.clientName')}:</span> <span className="font-medium ml-2">{project.clientName || '-'}</span></div>
               <div><span className="text-slate-500">{t('projects.priority')}:</span> <span className="font-medium ml-2 capitalize">{project.priority}</span></div>
               <div><span className="text-slate-500">{t('projects.siteName')}:</span> <span className="font-medium ml-2">{project.siteName || '-'}</span></div>
               <div><span className="text-slate-500">{t('projects.startDate')}:</span> <span className="font-medium ml-2">{project.startDate ? new Date(project.startDate).toLocaleDateString() : '-'}</span></div>
-              <div className="col-span-2"><span className="text-slate-500">{t('projects.address')}:</span> <span className="font-medium ml-2">{[project.siteAddress, project.city, project.state, project.country].filter(Boolean).join(', ') || '-'}</span></div>
-              {project.description && <div className="col-span-2"><span className="text-slate-500">{t('projects.description')}:</span> <span className="ml-2">{project.description}</span></div>}
+              <div className="sm:col-span-2"><span className="text-slate-500">{t('projects.address')}:</span> <span className="font-medium ml-2">{[project.siteAddress, project.city, project.state, project.country].filter(Boolean).join(', ') || '-'}</span></div>
+              {project.description && <div className="sm:col-span-2"><span className="text-slate-500">{t('projects.description')}:</span> <span className="ml-2">{project.description}</span></div>}
             </div>
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200">
-            <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-              <h3 className="font-semibold text-slate-800">{t('projects.materials')}</h3>
-              <div className="flex gap-2">
-                {!canDirectAssign && (
-                  <button onClick={() => setShowRequest(true)} className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs hover:bg-amber-700">
-                    <ClipboardList size={14} /> {t('projects.request')}
+            <div className="p-4 sm:p-6 border-b border-slate-200">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <h3 className="font-semibold text-slate-800">{t('projects.materials')}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {!canDirectAssign && (
+                    <button onClick={() => setShowRequest(true)} className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs hover:bg-amber-700">
+                      <ClipboardList size={14} /> {t('projects.request')}
+                    </button>
+                  )}
+                  {canDirectAssign && (
+                    <button onClick={() => setShowAssign(true)} className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700">
+                      <Plus size={14} /> {t('projects.assign')}
+                    </button>
+                  )}
+                  <button onClick={() => setShowInstall(true)} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs hover:bg-emerald-700">
+                    <Wrench size={14} /> {t('projects.install')}
                   </button>
-                )}
-                {canDirectAssign && (
-                  <button onClick={() => setShowAssign(true)} className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700">
-                    <Plus size={14} /> {t('projects.assign')}
+                  <button onClick={() => setShowReturn(true)} className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs hover:bg-purple-700">
+                    <RotateCcw size={14} /> {t('projects.return')}
                   </button>
-                )}
-                <button onClick={() => setShowInstall(true)} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs hover:bg-emerald-700">
-                  <Wrench size={14} /> {t('projects.install')}
-                </button>
-                <button onClick={() => setShowReturn(true)} className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs hover:bg-purple-700">
-                  <RotateCcw size={14} /> {t('projects.return')}
-                </button>
-                <button onClick={() => setShowTransfer(true)} className="flex items-center gap-1 px-3 py-1.5 bg-cyan-600 text-white rounded-lg text-xs hover:bg-cyan-700">
-                  <ArrowRightLeft size={14} /> {t('projects.transfer')}
-                </button>
+                  <button onClick={() => setShowTransfer(true)} className="flex items-center gap-1 px-3 py-1.5 bg-cyan-600 text-white rounded-lg text-xs hover:bg-cyan-700">
+                    <ArrowRightLeft size={14} /> {t('projects.transfer')}
+                  </button>
+                </div>
               </div>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-[500px]">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50">
                     <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.material')}</th>
@@ -245,12 +247,11 @@ export default function ProjectDetail() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-slate-800">{t('projects.documents')}</h3>
               <label className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
-                <Upload size={14} /> {t('projects.upload')}
-                <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onChange={handleFileUpload} />
+                <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
               </label>
             </div>
             {files.length === 0 ? (
@@ -280,7 +281,7 @@ export default function ProjectDetail() {
             )}
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
             <h3 className="font-semibold text-slate-800 mb-4">{t('projects.recentActivity')}</h3>
             {timeline.length === 0 ? (
               <div className="text-center py-4 text-slate-400 text-sm">{t('projects.noActivity')}</div>
