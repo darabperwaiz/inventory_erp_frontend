@@ -422,8 +422,8 @@ export default function ProjectDetail() {
       </div>
 
       {showAssign && <AssignMaterialModal projectId={id} onClose={() => setShowAssign(false)} onSuccess={() => { setShowAssign(false); fetchData(); }} />}
-      {showInstall && <InstallModal materials={materials} onClose={() => setShowInstall(false)} onSuccess={() => { setShowInstall(false); fetchData(); }} />}
-      {showReturn && <ReturnModal materials={materials} onClose={() => setShowReturn(false)} onSuccess={() => { setShowReturn(false); fetchData(); }} />}
+      {showInstall && <InstallModal projectId={id} materials={materials} onClose={() => setShowInstall(false)} onSuccess={() => { setShowInstall(false); fetchData(); }} />}
+      {showReturn && <ReturnModal projectId={id} materials={materials} onClose={() => setShowReturn(false)} onSuccess={() => { setShowReturn(false); fetchData(); }} />}
       {showTransfer && <TransferModal projectId={id} materials={materials} onClose={() => setShowTransfer(false)} onSuccess={() => { setShowTransfer(false); fetchData(); }} />}
       {showRequest && <RequestMaterialModal projectId={id} onClose={() => setShowRequest(false)} onSuccess={() => { setShowRequest(false); toast.success(t('projects.requestSubmitted')); }} />}
 
@@ -513,7 +513,7 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
   useEffect(() => {
     materialApi.getAll({ limit: 100 }).then(({ data }) => setAllMaterials(data.data));
     projectApi.getById(projectId).then(({ data }) => {
-      const team = data.data?.assignedTeam || [];
+      const team = data.data?.project?.assignedTeam || [];
       setTeamMembers(team.map(t => t.user).filter(Boolean));
     });
   }, [projectId]);
@@ -585,10 +585,18 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
   );
 }
 
-function InstallModal({ materials, onClose, onSuccess }) {
+function InstallModal({ projectId, materials, onClose, onSuccess }) {
   const { t } = useTranslation();
-  const [form, setForm] = useState({ projectMaterialId: '', installationDate: new Date().toISOString().split('T')[0], installedQuantity: '', checklistNumber: '', remarks: '' });
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [form, setForm] = useState({ projectMaterialId: '', installationDate: new Date().toISOString().split('T')[0], installedQuantity: '', checklistNumber: '', installedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    projectApi.getById(projectId).then(({ data }) => {
+      const team = data.data?.project?.assignedTeam || [];
+      setTeamMembers(team.map(t => t.user).filter(Boolean));
+    });
+  }, [projectId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -636,6 +644,14 @@ function InstallModal({ materials, onClose, onSuccess }) {
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
           <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.installedBy')}</label>
+            <select value={form.installedBy} onChange={(e) => setForm({ ...form, installedBy: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="">{t('projects.selectUser')}</option>
+              {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.remarks')}</label>
             <textarea value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} rows={2}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
@@ -652,10 +668,18 @@ function InstallModal({ materials, onClose, onSuccess }) {
   );
 }
 
-function ReturnModal({ materials, onClose, onSuccess }) {
+function ReturnModal({ projectId, materials, onClose, onSuccess }) {
   const { t } = useTranslation();
-  const [form, setForm] = useState({ projectMaterialId: '', returnDate: new Date().toISOString().split('T')[0], quantity: '', returnReason: '', remarks: '' });
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [form, setForm] = useState({ projectMaterialId: '', returnDate: new Date().toISOString().split('T')[0], quantity: '', returnReason: '', returnedBy: '', receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    projectApi.getById(projectId).then(({ data }) => {
+      const team = data.data?.project?.assignedTeam || [];
+      setTeamMembers(team.map(t => t.user).filter(Boolean));
+    });
+  }, [projectId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -702,6 +726,24 @@ function ReturnModal({ materials, onClose, onSuccess }) {
             <input type="text" value={form.returnReason} onChange={(e) => setForm({ ...form, returnReason: e.target.value })}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.returnedBy')}</label>
+              <select value={form.returnedBy} onChange={(e) => setForm({ ...form, returnedBy: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">{t('projects.selectUser')}</option>
+                {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
+              <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">{t('projects.selectUser')}</option>
+                {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+              </select>
+            </div>
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.remarks')}</label>
             <textarea value={form.remarks} onChange={(e) => setForm({ ...form, remarks: e.target.value })} rows={2}
@@ -722,10 +764,17 @@ function ReturnModal({ materials, onClose, onSuccess }) {
 function TransferModal({ projectId, materials, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [projects, setProjects] = useState([]);
-  const [form, setForm] = useState({ destinationProjectId: '', materialId: '', quantity: '', transferDate: new Date().toISOString().split('T')[0], remarks: '' });
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [form, setForm] = useState({ destinationProjectId: '', materialId: '', quantity: '', transferDate: new Date().toISOString().split('T')[0], receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { projectApi.getAll({ limit: 100 }).then(({ data }) => setProjects(data.data.filter((p) => p._id !== projectId))); }, [projectId]);
+  useEffect(() => {
+    projectApi.getAll({ limit: 100 }).then(({ data }) => setProjects(data.data.filter((p) => p._id !== projectId)));
+    projectApi.getById(projectId).then(({ data }) => {
+      const team = data.data?.project?.assignedTeam || [];
+      setTeamMembers(team.map(t => t.user).filter(Boolean));
+    });
+  }, [projectId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -774,6 +823,14 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
               <input type="date" value={form.transferDate} onChange={(e) => setForm({ ...form, transferDate: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
+            <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+              <option value="">{t('projects.selectUser')}</option>
+              {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.remarks')}</label>

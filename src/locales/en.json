@@ -278,6 +278,8 @@
     "installed": "Installed / المُركّب",
     "returned": "Returned / المرتجع",
     "receivedBy": "Received By / استلمها",
+    "installedBy": "Installed By / ثبّتها",
+    "returnedBy": "Returned By / أرجعها",
     "noMaterials": "No materials assigned / لا توجد مواد معيّنة",
     "upload": "Upload / رفع",
     "noDocuments": "No documents uploaded / لا توجد مستندات مرفوعة",
