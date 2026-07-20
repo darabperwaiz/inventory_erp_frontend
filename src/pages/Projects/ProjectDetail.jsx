@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, ArrowRightLeft, Upload, FileText, Download, Trash2, ClipboardList, X, Eye } from 'lucide-react';
 import { projectApi } from '../../api/project.api';
@@ -31,6 +31,7 @@ export default function ProjectDetail() {
   const [showRequest, setShowRequest] = useState(false);
   const [files, setFiles] = useState([]);
   const [previewFile, setPreviewFile] = useState(null);
+  const fileInputRef = useRef(null);
   const { user } = useAuthStore();
   const canDirectAssign = ['admin', 'project_manager'].includes(user?.role);
   const canRecordActions = ['admin', 'project_manager', 'site_engineer'].includes(user?.role);
@@ -260,10 +261,12 @@ export default function ProjectDetail() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-slate-800">{t('projects.documents')}</h3>
               {canUpload && (
-                <label className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
-                  <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
-                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onChange={handleFileUpload} className="hidden" />
-                </label>
+                <>
+                  <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
+                    <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
+                  </button>
+                  <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onChange={handleFileUpload} className="hidden" />
+                </>
               )}
             </div>
             {files.length === 0 ? (
