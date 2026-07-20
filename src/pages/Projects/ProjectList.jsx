@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
+import { useConfirm } from '../../components/ConfirmModal';
 
 const statusColors = {
   planning: 'bg-slate-100 text-slate-700',
@@ -25,6 +26,7 @@ const priorityColors = {
 export default function ProjectList() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
+  const { confirm, ConfirmModal } = useConfirm();
   const canManage = ['admin', 'project_manager'].includes(user?.role);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,8 @@ export default function ProjectList() {
   }, [page, search]);
 
   const handleDelete = async (id) => {
-    if (!confirm(t('projects.confirmDelete'))) return;
+    const ok = await confirm(t('projects.confirmDelete'), null, t('app.delete'));
+    if (!ok) return;
     try {
       await projectApi.delete(id);
       toast.success(t('projects.projectDeleted'));
@@ -298,6 +301,8 @@ export default function ProjectList() {
           onSuccess={() => { setShowForm(false); setEditingProject(null); fetchProjects(); }}
         />
       )}
+
+      {ConfirmModal}
     </div>
   );
 }

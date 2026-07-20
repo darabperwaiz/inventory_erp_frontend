@@ -6,6 +6,7 @@ import { materialApi } from '../../api/material.api';
 import { fileApi } from '../../api/file.api';
 import { approvalApi } from '../../api/approval.api';
 import useAuthStore from '../../store/authStore';
+import { useConfirm } from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +21,7 @@ const statusColors = {
 export default function ProjectDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
+  const { confirm, ConfirmModal } = useConfirm();
   const [project, setProject] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [timeline, setTimeline] = useState([]);
@@ -71,7 +73,8 @@ export default function ProjectDetail() {
   };
 
   const handleFileDelete = async (fileId) => {
-    if (!confirm(t('projects.confirmDeleteFile'))) return;
+    const ok = await confirm(t('projects.confirmDeleteFile'), null, t('app.delete'));
+    if (!ok) return;
     try {
       await fileApi.delete(fileId);
       toast.success(t('projects.fileDeleted'));
@@ -393,6 +396,8 @@ export default function ProjectDetail() {
           </div>
         </div>
       )}
+
+      {ConfirmModal}
     </div>
   );
 }

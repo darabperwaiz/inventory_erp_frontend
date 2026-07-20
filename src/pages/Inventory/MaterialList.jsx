@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
 import { materialApi } from '../../api/material.api';
 import { API_BASE } from '../../api/client';
+import { useConfirm } from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 
 export default function MaterialList() {
   const { t } = useTranslation();
   const { user } = useAuthStore();
+  const { confirm, ConfirmModal } = useConfirm();
   const canManageInventory = ['admin', 'inventory_manager'].includes(user?.role);
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +60,8 @@ export default function MaterialList() {
   }, []);
 
   const handleDelete = async (id) => {
-    if (!confirm(t('inventory.confirmDelete'))) return;
+    const ok = await confirm(t('inventory.confirmDelete'), null, t('app.delete'));
+    if (!ok) return;
     try {
       await materialApi.delete(id);
       toast.success(t('inventory.deleteSuccess'));
@@ -81,7 +84,8 @@ export default function MaterialList() {
   };
 
   const handleBulkDelete = async () => {
-    if (!confirm(t('inventory.confirmBulkDelete', { count: selected.length }))) return;
+    const ok = await confirm(t('inventory.confirmBulkDelete', { count: selected.length }), null, t('app.delete'));
+    if (!ok) return;
     try {
       await materialApi.bulkDelete(selected);
       toast.success(t('inventory.bulkDeleteSuccess', { count: selected.length }));
@@ -430,6 +434,8 @@ export default function MaterialList() {
           onClose={() => setPrintLabels(null)}
         />
       )}
+
+      {ConfirmModal}
     </div>
   );
 }

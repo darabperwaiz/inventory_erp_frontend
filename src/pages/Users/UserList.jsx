@@ -3,6 +3,7 @@ import { Plus, Search, Edit2, Trash2, UserCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { userApi } from '../../api/user.api';
 import { useTranslation } from 'react-i18next';
+import { useConfirm } from '../../components/ConfirmModal';
 
 const roleColors = {
   admin: 'bg-red-100 text-red-700',
@@ -40,6 +41,7 @@ const scopeTranslationKeys = {
 
 export default function UserList() {
   const { t } = useTranslation();
+  const { confirm, ConfirmModal } = useConfirm();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -69,7 +71,8 @@ export default function UserList() {
   }, [page, search]);
 
   const handleDelete = async (id) => {
-    if (!confirm(t('users.deactivate'))) return;
+    const ok = await confirm(t('users.deactivate'), null, t('app.confirm'));
+    if (!ok) return;
     try {
       await userApi.delete(id);
       toast.success('User deactivated');
@@ -201,6 +204,8 @@ export default function UserList() {
           onSuccess={() => { setShowForm(false); setEditingUser(null); fetchUsers(); }}
         />
       )}
+
+      {ConfirmModal}
     </div>
   );
 }
