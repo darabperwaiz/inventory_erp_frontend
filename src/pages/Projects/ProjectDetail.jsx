@@ -404,8 +404,14 @@ export default function ProjectDetail() {
                       t.type === 'return' ? 'bg-purple-500' : 'bg-cyan-500'
                     }`} />
                     <div>
-                      <div><span className="font-medium capitalize">{t.type}</span> {t.quantity} {t.material?.name}</div>
-                      <div className="text-xs text-slate-500">{new Date(t.date || t.createdAt).toLocaleDateString()}</div>
+                      <div>
+                        <span className="font-medium capitalize">{t.type}</span> {t.quantity} {t.material?.name}
+                        {t.user && <span className="text-slate-500"> — {t.user.name}</span>}
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        {new Date(t.date || t.createdAt).toLocaleDateString()}
+                        {t.receivedBy && t.type === 'assign' && <span className="ml-1 text-emerald-600">• Received by {t.receivedBy.name}</span>}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -500,14 +506,17 @@ export default function ProjectDetail() {
 function AssignMaterialModal({ projectId, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [allMaterials, setAllMaterials] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [form, setForm] = useState({ materialId: '', quantity: '', checklistNumber: '', issueVoucherNumber: '', receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     materialApi.getAll({ limit: 100 }).then(({ data }) => setAllMaterials(data.data));
-    import('../../api/user.api').then(({ userApi }) => userApi.getAll({ limit: 100 })).then(({ data }) => setAllUsers(data.data));
-  }, []);
+    projectApi.getById(projectId).then(({ data }) => {
+      const team = data.data?.assignedTeam || [];
+      setTeamMembers(team.map(t => t.user).filter(Boolean));
+    });
+  }, [projectId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -555,7 +564,7 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
               <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 <option value="">{t('projects.selectUser')}</option>
-                {allUsers.map((u) => <option key={u._id} value={u._id}>{u.name} ({u.userId})</option>)}
+                {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
               </select>
             </div>
           </div>
