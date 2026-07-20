@@ -275,6 +275,8 @@
     "noMaterials": "No materials assigned / لا توجد مواد معيّنة",
     "upload": "Upload / رفع",
     "noDocuments": "No documents uploaded / لا توجد مستندات مرفوعة",
+    "previewNotAvailable": "Preview not available for this file type / المعاينة غير متاحة لهذا النوع من الملفات",
+    "downloadInstead": "Download instead / بدلاً من التنزيل",
     "recentActivity": "Recent Activity / النشاط الأخير",
     "noActivity": "No activity yet / لا يوجد نشاط بعد",
     "requestSubmitted": "Request submitted / تم إرسال الطلب",

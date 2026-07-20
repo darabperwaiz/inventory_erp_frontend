@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, ArrowRightLeft, Upload, FileText, Download, Trash2, ClipboardList, X } from 'lucide-react';
+import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, ArrowRightLeft, Upload, FileText, Download, Trash2, ClipboardList, X, Eye } from 'lucide-react';
 import { projectApi } from '../../api/project.api';
 import { materialApi } from '../../api/material.api';
 import { fileApi } from '../../api/file.api';
@@ -30,6 +30,7 @@ export default function ProjectDetail() {
   const [showTransfer, setShowTransfer] = useState(false);
   const [showRequest, setShowRequest] = useState(false);
   const [files, setFiles] = useState([]);
+  const [previewFile, setPreviewFile] = useState(null);
   const { user } = useAuthStore();
   const canDirectAssign = ['admin', 'project_manager'].includes(user?.role);
   const canRecordActions = ['admin', 'project_manager', 'site_engineer'].includes(user?.role);
@@ -278,6 +279,9 @@ export default function ProjectDetail() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
+                      <button onClick={() => setPreviewFile(f)} className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-slate-100 rounded">
+                        <Eye size={14} />
+                      </button>
                       <a href={fileApi.download(f._id)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                         <Download size={14} />
                       </a>
@@ -324,6 +328,39 @@ export default function ProjectDetail() {
       {showReturn && <ReturnModal materials={materials} onClose={() => setShowReturn(false)} onSuccess={() => { setShowReturn(false); fetchData(); }} />}
       {showTransfer && <TransferModal projectId={id} materials={materials} onClose={() => setShowTransfer(false)} onSuccess={() => { setShowTransfer(false); fetchData(); }} />}
       {showRequest && <RequestMaterialModal projectId={id} onClose={() => setShowRequest(false)} onSuccess={() => { setShowRequest(false); toast.success(t('projects.requestSubmitted')); }} />}
+
+      {previewFile && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setPreviewFile(null)}>
+          <div className="bg-white rounded-xl w-full max-w-full sm:max-w-3xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-slate-800 truncate">{previewFile.originalName}</h3>
+              <div className="flex items-center gap-2">
+                <a href={fileApi.download(previewFile._id)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
+                  <Download size={16} />
+                </a>
+                <button onClick={() => setPreviewFile(null)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded">
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto p-4">
+              {previewFile.mimetype?.startsWith('image/') ? (
+                <img src={fileApi.preview(previewFile._id)} alt={previewFile.originalName} className="max-w-full mx-auto rounded-lg" />
+              ) : previewFile.mimetype === 'application/pdf' ? (
+                <iframe src={fileApi.preview(previewFile._id)} className="w-full h-[70vh] rounded-lg border" title={previewFile.originalName} />
+              ) : (
+                <div className="text-center py-8 text-slate-500">
+                  <FileText size={48} className="mx-auto mb-3 text-slate-300" />
+                  <p className="text-sm">{t('projects.previewNotAvailable')}</p>
+                  <a href={fileApi.download(previewFile._id)} className="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline">
+                    <Download size={14} /> {t('projects.downloadInstead')}
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
