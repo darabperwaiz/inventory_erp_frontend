@@ -262,6 +262,7 @@ export default function ProjectDetail() {
               {canUpload && (
                 <label className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
                   <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
+                  <input type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onChange={handleFileUpload} className="hidden" />
                 </label>
               )}
             </div>
