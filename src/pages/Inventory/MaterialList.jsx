@@ -799,15 +799,21 @@ function ReceiveMaterial({ onClose, onSuccess }) {
 
 function PrintLabelsModal({ materials, onClose }) {
   const { t } = useTranslation();
+
+  const escapeHtml = (str) => {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  };
+
   const handlePrint = () => {
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     const labels = materials.map(m => `
       <div class="label">
         <div class="qr" id="qr-${m._id}"></div>
         <div class="info">
-          <div class="name">${m.name}</div>
-          <div class="code">${m.materialCode}</div>
-          <div class="meta">${m.category} | ${m.unit}</div>
+          <div class="name">${escapeHtml(m.name)}</div>
+          <div class="code">${escapeHtml(m.materialCode)}</div>
+          <div class="meta">${escapeHtml(m.category)} | ${escapeHtml(m.unit)}</div>
         </div>
       </div>
     `).join('');
@@ -815,7 +821,7 @@ function PrintLabelsModal({ materials, onClose }) {
     printWindow.document.write(`
       <html>
         <head>
-          <title>${t('inventory.printLabels')}</title>
+          <title>${escapeHtml(t('inventory.printLabels'))}</title>
           <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -840,14 +846,14 @@ function PrintLabelsModal({ materials, onClose }) {
           </style>
         </head>
         <body>
-          <h2 style="margin-bottom:16px;font-size:16px;color:#333;">${t('inventory.materialLabels')}</h2>
+          <h2 style="margin-bottom:16px;font-size:16px;color:#333;">${escapeHtml(t('inventory.materialLabels'))}</h2>
           <div class="labels">
             ${labels}
           </div>
           <script>
             ${materials.map(m => `
               new QRCode(document.getElementById("qr-${m._id}"), {
-                text: "${m.materialCode}",
+                text: ${JSON.stringify(m.materialCode)},
                 width: 70, height: 70,
                 correctLevel: QRCode.CorrectLevel.M
               });
