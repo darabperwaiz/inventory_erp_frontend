@@ -263,6 +263,7 @@
     "projectTeam": "Project Team / فريق المشروع",
     "fileUploaded": "File uploaded / تم رفع الملف",
     "uploadFailed": "Upload failed / فشل الرفع",
+    "uploading": "Uploading... / جاري الرفع...",
     "confirmDeleteFile": "Are you sure you want to delete this file? / هل أنت متأكد من حذف هذا الملف؟",
     "fileDeleted": "File deleted / تم حذف الملف",
     "notFound": "Project not found / المشروع غير موجود",

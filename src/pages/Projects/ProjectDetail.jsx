@@ -31,6 +31,9 @@ export default function ProjectDetail() {
   const [showRequest, setShowRequest] = useState(false);
   const [files, setFiles] = useState([]);
   const [previewFile, setPreviewFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
   const { user } = useAuthStore();
   const canDirectAssign = ['admin', 'project_manager'].includes(user?.role);
@@ -52,12 +55,18 @@ export default function ProjectDetail() {
     formData.append('category', 'document');
     formData.append('relatedTo', 'project');
     formData.append('relatedId', id);
+    setUploading(true);
+    setUploadProgress(0);
     try {
-      await fileApi.upload(formData);
+      await fileApi.upload(formData, (pct) => setUploadProgress(pct));
       toast.success(t('projects.fileUploaded'));
       fetchFiles();
     } catch (err) {
       toast.error(err.response?.data?.message || t('projects.uploadFailed'));
+    } finally {
+      setUploading(false);
+      setUploadProgress(0);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -89,6 +98,15 @@ export default function ProjectDetail() {
   };
 
   useEffect(() => { fetchData(); }, [id]);
+
+  useEffect(() => {
+    if (!previewFile) { setPreviewUrl(null); return; }
+    let cancelled = false;
+    fileApi.preview(previewFile._id).then((url) => {
+      if (!cancelled) setPreviewUrl(url);
+    });
+    return () => { cancelled = true; if (previewUrl) URL.revokeObjectURL(previewUrl); };
+  }, [previewFile]);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;
   if (!project) return <div className="text-center py-8 text-slate-400">{t('projects.notFound')}</div>;
@@ -262,13 +280,21 @@ export default function ProjectDetail() {
               <h3 className="font-semibold text-slate-800">{t('projects.documents')}</h3>
               {canUpload && (
                 <>
-                  <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
-                    <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
+                  <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    <Upload size={14} /> <span className="hidden sm:inline">{uploading ? `${uploadProgress}%` : t('projects.upload')}</span>
                   </button>
                   <input ref={fileInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xls,.xlsx" onChange={handleFileUpload} className="hidden" />
                 </>
               )}
             </div>
+            {uploading && (
+              <div className="mb-4">
+                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                  <div className="bg-blue-600 h-full rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                </div>
+                <p className="text-xs text-slate-500 mt-1">{t('projects.uploading')} {uploadProgress}%</p>
+              </div>
+            )}
             {files.length === 0 ? (
               <div className="text-center py-4 text-slate-400 text-sm">{t('projects.noDocuments')}</div>
             ) : (
@@ -348,10 +374,12 @@ export default function ProjectDetail() {
               </div>
             </div>
             <div className="flex-1 overflow-auto p-4">
-              {previewFile.mimetype?.startsWith('image/') ? (
-                <img src={fileApi.preview(previewFile._id)} alt={previewFile.originalName} className="max-w-full mx-auto rounded-lg" />
+              {!previewUrl ? (
+                <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>
+              ) : previewFile.mimetype?.startsWith('image/') ? (
+                <img src={previewUrl} alt={previewFile.originalName} className="max-w-full mx-auto rounded-lg" />
               ) : previewFile.mimetype === 'application/pdf' ? (
-                <iframe src={fileApi.preview(previewFile._id)} className="w-full h-[70vh] rounded-lg border" title={previewFile.originalName} />
+                <iframe src={previewUrl} className="w-full h-[70vh] rounded-lg border" title={previewFile.originalName} />
               ) : (
                 <div className="text-center py-8 text-slate-500">
                   <FileText size={48} className="mx-auto mb-3 text-slate-300" />
