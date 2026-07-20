@@ -279,7 +279,7 @@ function TransactionReports() {
                 <th className="text-left px-4 py-3 font-medium text-slate-600">Type</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">Material</th>
                 <th className="text-right px-4 py-3 font-medium text-slate-600">Qty</th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">User</th>
+                <th className="text-left px-4 py-3 font-medium text-slate-600">Received By</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">Remarks</th>
               </tr>
             </thead>
@@ -303,7 +303,7 @@ function TransactionReports() {
                     </td>
                     <td className="px-4 py-3">{tr.material?.name}</td>
                     <td className="px-4 py-3 text-right font-medium">{tr.quantity}</td>
-                    <td className="px-4 py-3 text-slate-600">{tr.user?.name}</td>
+                    <td className="px-4 py-3 text-slate-600">{tr.receivedBy?.name || tr.user?.name}</td>
                     <td className="px-4 py-3 text-slate-500 text-xs">{tr.remarks}</td>
                   </tr>
                 ))

@@ -244,12 +244,13 @@ export default function ProjectDetail() {
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.installed')}</th>
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.returned')}</th>
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.remaining')}</th>
+                    <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.receivedBy')}</th>
                     <th className="text-center px-4 py-3 font-medium text-slate-600">{t('app.status')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {materials.length === 0 ? (
-                    <tr><td colSpan="6" className="text-center py-8 text-slate-400">{t('projects.noMaterials')}</td></tr>
+                    <tr><td colSpan="7" className="text-center py-8 text-slate-400">{t('projects.noMaterials')}</td></tr>
                   ) : (
                     materials.map((pm) => {
                       const remaining = pm.assignedQuantity - pm.installedQuantity - pm.returnedQuantity - pm.transferredOutQuantity;
@@ -263,6 +264,7 @@ export default function ProjectDetail() {
                           <td className="px-4 py-3 text-right text-emerald-600">{pm.installedQuantity}</td>
                           <td className="px-4 py-3 text-right text-purple-600">{pm.returnedQuantity}</td>
                           <td className="px-4 py-3 text-right font-medium">{remaining}</td>
+                          <td className="px-4 py-3 text-sm text-slate-600">{pm.receivedBy?.name || '-'}</td>
                           <td className="px-4 py-3 text-center">
                             <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
                               pm.status === 'active' ? 'bg-amber-100 text-amber-700' :
