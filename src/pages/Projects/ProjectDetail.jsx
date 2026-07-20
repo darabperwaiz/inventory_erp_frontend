@@ -500,10 +500,14 @@ export default function ProjectDetail() {
 function AssignMaterialModal({ projectId, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [allMaterials, setAllMaterials] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [form, setForm] = useState({ materialId: '', quantity: '', checklistNumber: '', issueVoucherNumber: '', receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => { materialApi.getAll({ limit: 100 }).then(({ data }) => setAllMaterials(data.data)); }, []);
+  useEffect(() => {
+    materialApi.getAll({ limit: 100 }).then(({ data }) => setAllMaterials(data.data));
+    import('../../api/user.api').then(({ userApi }) => userApi.getAll({ limit: 100 })).then(({ data }) => setAllUsers(data.data));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -548,8 +552,11 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
-              <input type="text" value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+              <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">{t('projects.selectUser')}</option>
+                {allUsers.map((u) => <option key={u._id} value={u._id}>{u.name} ({u.userId})</option>)}
+              </select>
             </div>
           </div>
           <div>
