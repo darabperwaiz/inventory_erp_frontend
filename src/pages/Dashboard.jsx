@@ -163,14 +163,8 @@ function PMDashboard() {
       <div><h2 className="text-2xl font-bold text-slate-800">{t('dashboard.pmTitle')}</h2><p className="text-slate-500 text-sm mt-1">{t('dashboard.pmOverview')}</p></div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-5"><p className="text-sm text-slate-500">{t('dashboard.myProjects')}</p><p className="text-3xl font-bold text-blue-600 mt-1">{data?.myProjects?.length || 0}</p></div>
-        <div className="bg-white rounded-xl border border-slate-200 p-5"><p className="text-sm text-slate-500">{t('dashboard.pendingApprovals')}</p><p className="text-3xl font-bold text-amber-600 mt-1">{data?.pendingApprovals || 0}</p></div>
         <div className="bg-white rounded-xl border border-slate-200 p-5"><p className="text-sm text-slate-500">{t('dashboard.recentAssignments')}</p><p className="text-3xl font-bold text-emerald-600 mt-1">{data?.recentMaterials?.length || 0}</p></div>
       </div>
-      {data?.pendingApprovals > 0 && (
-        <Link to="/approvals" className="block bg-amber-50 border border-amber-200 rounded-xl p-4 hover:bg-amber-100 transition-colors">
-          <div className="flex items-center gap-3"><ClipboardCheck size={20} className="text-amber-600" /><div><div className="font-medium text-amber-800">{data.pendingApprovals} {t('dashboard.pendingApprovalCount')}</div><div className="text-sm text-amber-600">{t('dashboard.clickToReview')}</div></div><ArrowRight size={16} className="text-amber-400 ml-auto" /></div>
-        </Link>
-      )}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <h3 className="font-semibold text-slate-800 mb-4">{t('dashboard.myProjects')}</h3>
         {data?.myProjects?.length === 0 ? <div className="text-center py-6 text-slate-400 text-sm">{t('dashboard.noProjects')}</div> : (

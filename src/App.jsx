@@ -55,11 +55,6 @@ function App() {
           <Route path="inventory" element={<MaterialList />} />
           <Route path="inventory/:id/history" element={<MaterialHistory />} />
           <Route path="reports" element={<Reports />} />
-          <Route path="approvals" element={
-            <ProtectedRoute roles={['admin', 'project_manager']}>
-              <Approvals />
-            </ProtectedRoute>
-          } />
           <Route
             path="users"
             element={
@@ -73,14 +68,6 @@ function App() {
             element={
               <ProtectedRoute roles={['admin']}>
                 <AuditLogs />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="reorder-alerts"
-            element={
-              <ProtectedRoute roles={['admin', 'inventory_manager']}>
-                <ReorderAlerts />
               </ProtectedRoute>
             }
           />

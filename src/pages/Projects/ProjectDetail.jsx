@@ -773,12 +773,17 @@ function ReturnModal({ projectId, materials, onClose, onSuccess }) {
 function TransferModal({ projectId, materials, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [projects, setProjects] = useState([]);
+  const [sourceTeamMembers, setSourceTeamMembers] = useState([]);
   const [destTeamMembers, setDestTeamMembers] = useState([]);
-  const [form, setForm] = useState({ destinationProjectId: '', materialId: '', quantity: '', transferDate: new Date().toISOString().split('T')[0], receivedBy: '', remarks: '' });
+  const [form, setForm] = useState({ destinationProjectId: '', materialId: '', quantity: '', transferDate: new Date().toISOString().split('T')[0], transferredBy: '', receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     projectApi.getAll({ limit: 100 }).then(({ data }) => setProjects(data.data.filter((p) => p._id !== projectId)));
+    projectApi.getById(projectId).then(({ data }) => {
+      const team = data.data?.project?.assignedTeam || [];
+      setSourceTeamMembers(team.map(t => t.user).filter(Boolean));
+    });
   }, [projectId]);
 
   useEffect(() => {
@@ -840,13 +845,23 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
-            <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled={!form.destinationProjectId}>
-              <option value="">{form.destinationProjectId ? t('projects.selectUser') : t('projects.selectProjectFirst')}</option>
-              {destTeamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
-            </select>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.transferredBy')}</label>
+              <select value={form.transferredBy} onChange={(e) => setForm({ ...form, transferredBy: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <option value="">{t('projects.selectUser')}</option>
+                {sourceTeamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
+              <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled={!form.destinationProjectId}>
+                <option value="">{form.destinationProjectId ? t('projects.selectUser') : t('projects.selectProjectFirst')}</option>
+                {destTeamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+              </select>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.remarks')}</label>

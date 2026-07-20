@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Search, Package, Edit2, Trash2, Eye, History, Image, X, QrCode, SlidersHorizontal, Printer, Barcode, MoreVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
+import { userApi } from '../../api/user.api';
 import { materialApi } from '../../api/material.api';
 import { API_BASE } from '../../api/client';
 import { useConfirm } from '../../components/ConfirmModal';
@@ -164,9 +165,6 @@ export default function MaterialList() {
         <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <span className="text-sm text-blue-700 font-medium">{t('app.selected', { count: selected.length })}</span>
           <div className="flex flex-wrap gap-2">
-            <button onClick={() => handleExportSelected('pdf')} className="px-3 py-1.5 bg-white border border-blue-300 text-blue-700 rounded-lg text-xs hover:bg-blue-100">
-              {t('inventory.exportPDF')}
-            </button>
             <button onClick={() => handleExportSelected('xlsx')} className="px-3 py-1.5 bg-white border border-blue-300 text-blue-700 rounded-lg text-xs hover:bg-blue-100">
               {t('inventory.exportExcel')}
             </button>
@@ -681,6 +679,7 @@ function MaterialForm({ material, onClose, onSuccess }) {
 function ReceiveMaterial({ onClose, onSuccess }) {
   const { t } = useTranslation();
   const [materials, setMaterials] = useState([]);
+  const [inventoryUsers, setInventoryUsers] = useState([]);
   const [form, setForm] = useState({
     materialId: '',
     quantity: '',
@@ -688,12 +687,20 @@ function ReceiveMaterial({ onClose, onSuccess }) {
     purchaseOrder: '',
     invoiceNumber: '',
     receivedDate: new Date().toISOString().split('T')[0],
+    receivedBy: '',
     remarks: '',
   });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     materialApi.getAll({ limit: 100 }).then(({ data }) => setMaterials(data.data));
+    userApi.getAll({ role: 'admin', limit: 50 }).then(({ data }) => {
+      const admins = data.data || [];
+      userApi.getAll({ role: 'inventory_manager', limit: 50 }).then(({ data: data2 }) => {
+        const ims = data2.data || [];
+        setInventoryUsers([...admins, ...ims]);
+      });
+    });
   }, []);
 
   const handleSubmit = async (e) => {
@@ -779,6 +786,19 @@ function ReceiveMaterial({ onClose, onSuccess }) {
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
+            <select
+              value={form.receivedBy}
+              onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              <option value="">{t('projects.selectUser')}</option>
+              {inventoryUsers.map((u) => (
+                <option key={u._id} value={u._id}>{u.name}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('inventory.remarks')}</label>

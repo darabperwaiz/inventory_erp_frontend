@@ -52,9 +52,6 @@ function ExportButtons({ onExportPDF, onExportExcel }) {
   const { t } = useTranslation();
   return (
     <div className="flex gap-2">
-      <button onClick={onExportPDF} className="flex items-center gap-1 px-3 py-1.5 bg-red-100 text-red-700 rounded-lg text-xs hover:bg-red-200">
-        <FileText size={14} /> {t('reports.exportPDF')}
-      </button>
       <button onClick={onExportExcel} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-xs hover:bg-emerald-200">
         <FileSpreadsheet size={14} /> {t('reports.exportExcel')}
       </button>
