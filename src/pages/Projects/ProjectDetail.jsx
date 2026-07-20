@@ -32,6 +32,9 @@ export default function ProjectDetail() {
   const [files, setFiles] = useState([]);
   const { user } = useAuthStore();
   const canDirectAssign = ['admin', 'project_manager'].includes(user?.role);
+  const isViewer = user?.role === 'viewer';
+  const canRecordActions = !isViewer;
+  const canUpload = !isViewer;
 
   const fetchFiles = async () => {
     try {
@@ -125,7 +128,7 @@ export default function ProjectDetail() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <h3 className="font-semibold text-slate-800">{t('projects.materials')}</h3>
                 <div className="flex flex-wrap gap-2">
-                  {!canDirectAssign && (
+                  {!canDirectAssign && !isViewer && (
                     <button onClick={() => setShowRequest(true)} className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs hover:bg-amber-700">
                       <ClipboardList size={14} /> {t('projects.request')}
                     </button>
@@ -135,15 +138,21 @@ export default function ProjectDetail() {
                       <Plus size={14} /> {t('projects.assign')}
                     </button>
                   )}
-                  <button onClick={() => setShowInstall(true)} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs hover:bg-emerald-700">
-                    <Wrench size={14} /> {t('projects.install')}
-                  </button>
-                  <button onClick={() => setShowReturn(true)} className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs hover:bg-purple-700">
-                    <RotateCcw size={14} /> {t('projects.return')}
-                  </button>
-                  <button onClick={() => setShowTransfer(true)} className="flex items-center gap-1 px-3 py-1.5 bg-cyan-600 text-white rounded-lg text-xs hover:bg-cyan-700">
-                    <ArrowRightLeft size={14} /> {t('projects.transfer')}
-                  </button>
+                  {canRecordActions && (
+                    <button onClick={() => setShowInstall(true)} className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs hover:bg-emerald-700">
+                      <Wrench size={14} /> {t('projects.install')}
+                    </button>
+                  )}
+                  {canRecordActions && (
+                    <button onClick={() => setShowReturn(true)} className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-xs hover:bg-purple-700">
+                      <RotateCcw size={14} /> {t('projects.return')}
+                    </button>
+                  )}
+                  {canRecordActions && (
+                    <button onClick={() => setShowTransfer(true)} className="flex items-center gap-1 px-3 py-1.5 bg-cyan-600 text-white rounded-lg text-xs hover:bg-cyan-700">
+                      <ArrowRightLeft size={14} /> {t('projects.transfer')}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -250,9 +259,11 @@ export default function ProjectDetail() {
           <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-slate-800">{t('projects.documents')}</h3>
-              <label className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
-                <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
-              </label>
+              {canUpload && (
+                <label className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg text-xs hover:bg-slate-200 cursor-pointer">
+                  <Upload size={14} /> <span className="hidden sm:inline">{t('projects.upload')}</span>
+                </label>
+              )}
             </div>
             {files.length === 0 ? (
               <div className="text-center py-4 text-slate-400 text-sm">{t('projects.noDocuments')}</div>
@@ -271,9 +282,11 @@ export default function ProjectDetail() {
                       <a href={fileApi.download(f._id)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                         <Download size={14} />
                       </a>
-                      <button onClick={() => handleFileDelete(f._id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
-                        <Trash2 size={14} />
-                      </button>
+                      {canUpload && (
+                        <button onClick={() => handleFileDelete(f._id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}

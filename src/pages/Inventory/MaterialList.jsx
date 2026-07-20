@@ -2,12 +2,15 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Package, Edit2, Trash2, Eye, History, Image, X, QrCode, SlidersHorizontal, Printer, Barcode, MoreVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import useAuthStore from '../../store/authStore';
 import { materialApi } from '../../api/material.api';
 import { API_BASE } from '../../api/client';
 import toast from 'react-hot-toast';
 
 export default function MaterialList() {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const canManageInventory = ['admin', 'inventory_manager'].includes(user?.role);
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -134,18 +137,22 @@ export default function MaterialList() {
           <p className="text-slate-500 text-sm mt-1">{t('inventory.subtitle')}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
+          {canManageInventory && (
           <button
             onClick={() => setShowReceive(true)}
             className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm"
           >
             <Package size={16} /> {t('inventory.receive')}
           </button>
+          )}
+          {canManageInventory && (
           <button
             onClick={() => { setEditingMaterial(null); setShowForm(true); }}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
           >
             <Plus size={16} /> {t('inventory.addMaterial')}
           </button>
+          )}
         </div>
       </div>
 
@@ -165,9 +172,11 @@ export default function MaterialList() {
             }} className="px-3 py-1.5 bg-white border border-blue-300 text-blue-700 rounded-lg text-xs hover:bg-blue-100 flex items-center gap-1">
               <Printer size={12} /> {t('inventory.printLabels')}
             </button>
+            {canManageInventory && (
             <button onClick={handleBulkDelete} className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs hover:bg-red-700">
               {t('inventory.bulkDelete')}
             </button>
+            )}
             <button onClick={() => setSelected([])} className="px-3 py-1.5 bg-white border border-slate-300 text-slate-600 rounded-lg text-xs hover:bg-slate-100">
               {t('app.clear')}
             </button>
@@ -263,6 +272,7 @@ export default function MaterialList() {
                               <History size={14} className="text-purple-500" />
                               {t('inventory.history')}
                             </Link>
+                            {canManageInventory && (
                             <button
                               onClick={() => { setEditingMaterial(m); setShowForm(true); setOpenDropdown(null); }}
                               className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 w-full text-left"
@@ -270,6 +280,8 @@ export default function MaterialList() {
                               <Edit2 size={14} className="text-blue-500" />
                               {t('app.edit')}
                             </button>
+                            )}
+                            {canManageInventory && (
                             <button
                               onClick={() => { setAdjustMaterial(m); setOpenDropdown(null); }}
                               className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 w-full text-left"
@@ -277,6 +289,7 @@ export default function MaterialList() {
                               <SlidersHorizontal size={14} className="text-amber-500" />
                               {t('inventory.adjustStock')}
                             </button>
+                            )}
                             <button
                               onClick={() => { showQR(m); setOpenDropdown(null); }}
                               className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 w-full text-left"
@@ -291,6 +304,8 @@ export default function MaterialList() {
                               <Barcode size={14} className="text-slate-500" />
                               {t('inventory.barcode')}
                             </button>
+                            {canManageInventory && (
+                            <>
                             <hr className="my-1 border-slate-100" />
                             <button
                               onClick={() => { handleDelete(m._id); setOpenDropdown(null); }}
@@ -299,6 +314,8 @@ export default function MaterialList() {
                               <Trash2 size={14} />
                               {t('app.delete')}
                             </button>
+                            </>
+                            )}
                           </div>
                         )}
                       </div>

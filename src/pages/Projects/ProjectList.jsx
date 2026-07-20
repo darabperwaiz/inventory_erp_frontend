@@ -5,6 +5,7 @@ import { userApi } from '../../api/user.api';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import useAuthStore from '../../store/authStore';
 
 const statusColors = {
   planning: 'bg-slate-100 text-slate-700',
@@ -23,6 +24,8 @@ const priorityColors = {
 
 export default function ProjectList() {
   const { t } = useTranslation();
+  const { user } = useAuthStore();
+  const canManage = ['admin', 'project_manager'].includes(user?.role);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -92,12 +95,14 @@ export default function ProjectList() {
               <LayoutGrid size={16} />
             </button>
           </div>
-          <button
-            onClick={() => { setEditingProject(null); setShowForm(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
-          >
-            <Plus size={16} /> <span className="hidden sm:inline">{t('projects.newProject')}</span>
-          </button>
+          {canManage && (
+            <button
+              onClick={() => { setEditingProject(null); setShowForm(true); }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+            >
+              <Plus size={16} /> <span className="hidden sm:inline">{t('projects.newProject')}</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -167,14 +172,18 @@ export default function ProjectList() {
                           <Link to={`/projects/${p._id}`} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                             <Eye size={14} />
                           </Link>
-                          <button onClick={() => { setEditingProject(p); setShowForm(true); }}
-                            className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
-                            <Edit2 size={14} />
-                          </button>
-                          <button onClick={() => handleDelete(p._id)}
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
-                            <Trash2 size={14} />
-                          </button>
+                          {canManage && (
+                            <>
+                              <button onClick={() => { setEditingProject(p); setShowForm(true); }}
+                                className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
+                                <Edit2 size={14} />
+                              </button>
+                              <button onClick={() => handleDelete(p._id)}
+                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
+                                <Trash2 size={14} />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -204,14 +213,18 @@ export default function ProjectList() {
                         <Link to={`/projects/${p._id}`} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                           <Eye size={14} />
                         </Link>
-                        <button onClick={() => { setEditingProject(p); setShowForm(true); }}
-                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
-                          <Edit2 size={14} />
-                        </button>
-                        <button onClick={() => handleDelete(p._id)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
-                          <Trash2 size={14} />
-                        </button>
+                        {canManage && (
+                          <>
+                            <button onClick={() => { setEditingProject(p); setShowForm(true); }}
+                              className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
+                              <Edit2 size={14} />
+                            </button>
+                            <button onClick={() => handleDelete(p._id)}
+                              className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-slate-100 rounded">
+                              <Trash2 size={14} />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -280,6 +293,7 @@ export default function ProjectList() {
       {showForm && (
         <ProjectForm
           project={editingProject}
+          canManage={canManage}
           onClose={() => { setShowForm(false); setEditingProject(null); }}
           onSuccess={() => { setShowForm(false); setEditingProject(null); fetchProjects(); }}
         />
@@ -288,7 +302,7 @@ export default function ProjectList() {
   );
 }
 
-function ProjectForm({ project, onClose, onSuccess }) {
+function ProjectForm({ project, canManage, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [form, setForm] = useState({
     name: project?.name || '',
@@ -460,10 +474,12 @@ function ProjectForm({ project, onClose, onSuccess }) {
               <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
                 <Users size={16} /> {t('projects.projectTeam')}
               </label>
-              <button type="button" onClick={addTeamMember}
-                className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700">
-                <Plus size={12} /> {t('projects.addMember')}
-              </button>
+              {canManage && (
+                <button type="button" onClick={addTeamMember}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700">
+                  <Plus size={12} /> {t('projects.addMember')}
+                </button>
+              )}
             </div>
             {team.length === 0 ? (
               <p className="text-xs text-slate-400 py-2">{t('projects.noTeam')}</p>
@@ -483,10 +499,12 @@ function ProjectForm({ project, onClose, onSuccess }) {
                         {member.role?.replace('_', ' ')}
                       </span>
                     )}
-                    <button type="button" onClick={() => removeTeamMember(i)}
-                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded">
-                      <Trash2 size={14} />
-                    </button>
+                    {canManage && (
+                      <button type="button" onClick={() => removeTeamMember(i)}
+                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded">
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>

@@ -27,8 +27,8 @@ export default function Dashboard() {
   if (user?.role === 'project_manager') return <PMDashboard />;
   if (user?.role === 'inventory_manager') return <InventoryDashboard />;
   if (user?.role === 'site_engineer') return <EngineerDashboard />;
-  if (user?.role === 'viewer') return <ViewerDashboard />;
-  return <AdminDashboard />;
+  if (user?.role === 'admin') return <AdminDashboard />;
+  return <ViewerDashboard />;
 }
 
 function AdminDashboard() {
