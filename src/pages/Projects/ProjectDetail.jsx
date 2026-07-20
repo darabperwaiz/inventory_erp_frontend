@@ -32,9 +32,8 @@ export default function ProjectDetail() {
   const [files, setFiles] = useState([]);
   const { user } = useAuthStore();
   const canDirectAssign = ['admin', 'project_manager'].includes(user?.role);
-  const isViewer = user?.role === 'viewer';
-  const canRecordActions = !isViewer;
-  const canUpload = !isViewer;
+  const canRecordActions = ['admin', 'project_manager', 'site_engineer'].includes(user?.role);
+  const canUpload = user?.role !== 'viewer';
 
   const fetchFiles = async () => {
     try {
@@ -128,7 +127,7 @@ export default function ProjectDetail() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <h3 className="font-semibold text-slate-800">{t('projects.materials')}</h3>
                 <div className="flex flex-wrap gap-2">
-                  {!canDirectAssign && !isViewer && (
+                  {!canDirectAssign && canRecordActions && (
                     <button onClick={() => setShowRequest(true)} className="flex items-center gap-1 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs hover:bg-amber-700">
                       <ClipboardList size={14} /> {t('projects.request')}
                     </button>
