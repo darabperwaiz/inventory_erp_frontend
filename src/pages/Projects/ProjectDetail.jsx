@@ -4,6 +4,7 @@ import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, A
 import { projectApi } from '../../api/project.api';
 import { materialApi } from '../../api/material.api';
 import { fileApi } from '../../api/file.api';
+import { userApi } from '../../api/user.api';
 import { getAccessToken, API_BASE } from '../../api/client';
 import { approvalApi } from '../../api/approval.api';
 import useAuthStore from '../../store/authStore';
@@ -671,6 +672,7 @@ function InstallModal({ projectId, materials, onClose, onSuccess }) {
 function ReturnModal({ projectId, materials, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [teamMembers, setTeamMembers] = useState([]);
+  const [inventoryUsers, setInventoryUsers] = useState([]);
   const [form, setForm] = useState({ projectMaterialId: '', returnDate: new Date().toISOString().split('T')[0], quantity: '', returnReason: '', returnedBy: '', receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
 
@@ -678,6 +680,13 @@ function ReturnModal({ projectId, materials, onClose, onSuccess }) {
     projectApi.getById(projectId).then(({ data }) => {
       const team = data.data?.project?.assignedTeam || [];
       setTeamMembers(team.map(t => t.user).filter(Boolean));
+    });
+    userApi.getAll({ role: 'admin', limit: 50 }).then(({ data }) => {
+      const admins = data.data || [];
+      userApi.getAll({ role: 'inventory_manager', limit: 50 }).then(({ data: data2 }) => {
+        const ims = data2.data || [];
+        setInventoryUsers([...admins, ...ims]);
+      });
     });
   }, [projectId]);
 
@@ -740,7 +749,7 @@ function ReturnModal({ projectId, materials, onClose, onSuccess }) {
               <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
                 <option value="">{t('projects.selectUser')}</option>
-                {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+                {inventoryUsers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
               </select>
             </div>
           </div>
@@ -764,17 +773,24 @@ function ReturnModal({ projectId, materials, onClose, onSuccess }) {
 function TransferModal({ projectId, materials, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [projects, setProjects] = useState([]);
-  const [teamMembers, setTeamMembers] = useState([]);
+  const [destTeamMembers, setDestTeamMembers] = useState([]);
   const [form, setForm] = useState({ destinationProjectId: '', materialId: '', quantity: '', transferDate: new Date().toISOString().split('T')[0], receivedBy: '', remarks: '' });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     projectApi.getAll({ limit: 100 }).then(({ data }) => setProjects(data.data.filter((p) => p._id !== projectId)));
-    projectApi.getById(projectId).then(({ data }) => {
-      const team = data.data?.project?.assignedTeam || [];
-      setTeamMembers(team.map(t => t.user).filter(Boolean));
-    });
   }, [projectId]);
+
+  useEffect(() => {
+    if (form.destinationProjectId) {
+      projectApi.getById(form.destinationProjectId).then(({ data }) => {
+        const team = data.data?.project?.assignedTeam || [];
+        setDestTeamMembers(team.map(t => t.user).filter(Boolean));
+      });
+    } else {
+      setDestTeamMembers([]);
+    }
+  }, [form.destinationProjectId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -827,9 +843,9 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('projects.receivedBy')}</label>
             <select value={form.receivedBy} onChange={(e) => setForm({ ...form, receivedBy: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-              <option value="">{t('projects.selectUser')}</option>
-              {teamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" disabled={!form.destinationProjectId}>
+              <option value="">{form.destinationProjectId ? t('projects.selectUser') : t('projects.selectProjectFirst')}</option>
+              {destTeamMembers.map((u) => <option key={u._id} value={u._id}>{u.name}</option>)}
             </select>
           </div>
           <div>
