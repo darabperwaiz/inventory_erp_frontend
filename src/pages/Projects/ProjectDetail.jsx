@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, ArrowRightLeft, Upload, FileText, Download, Trash2, ClipboardList, X, Eye } from 'lucide-react';
+import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, ArrowRightLeft, Upload, FileText, Download, Trash2, ClipboardList, X, Eye, FileSpreadsheet, FileImage, File } from 'lucide-react';
 import { projectApi } from '../../api/project.api';
 import { materialApi } from '../../api/material.api';
 import { fileApi } from '../../api/file.api';
+import { getAccessToken, API_BASE } from '../../api/client';
 import { approvalApi } from '../../api/approval.api';
 import useAuthStore from '../../store/authStore';
 import { useConfirm } from '../../components/ConfirmModal';
@@ -17,6 +18,36 @@ const statusColors = {
   completed: 'bg-blue-100 text-blue-700',
   cancelled: 'bg-red-100 text-red-700',
 };
+
+function getFileTypeInfo(filename, mimetype) {
+  const ext = filename?.split('.').pop()?.toLowerCase() || '';
+  if (mimetype?.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) {
+    return { type: 'image', color: 'bg-violet-100 text-violet-600', Icon: FileImage, label: ext.toUpperCase() };
+  }
+  if (mimetype === 'application/pdf' || ext === 'pdf') {
+    return { type: 'pdf', color: 'bg-red-100 text-red-600', Icon: FileText, label: 'PDF' };
+  }
+  if (['doc', 'docx'].includes(ext) || mimetype?.includes('word')) {
+    return { type: 'docx', color: 'bg-blue-100 text-blue-600', Icon: FileText, label: 'DOC' };
+  }
+  if (['xls', 'xlsx'].includes(ext) || mimetype?.includes('sheet') || mimetype?.includes('excel')) {
+    return { type: 'xlsx', color: 'bg-emerald-100 text-emerald-600', Icon: FileSpreadsheet, label: 'XLS' };
+  }
+  if (ext === 'csv' || mimetype === 'text/csv') {
+    return { type: 'csv', color: 'bg-amber-100 text-amber-600', Icon: FileSpreadsheet, label: 'CSV' };
+  }
+  return { type: 'other', color: 'bg-slate-100 text-slate-500', Icon: File, label: ext.toUpperCase() || 'FILE' };
+}
+
+function FileThumbnail({ file, size = 'sm' }) {
+  const info = getFileTypeInfo(file.originalName, file.mimetype);
+  const sizes = { sm: 'w-9 h-9 text-xs', md: 'w-12 h-12 text-sm' };
+  return (
+    <div className={`${sizes[size]} ${info.color} rounded-lg flex items-center justify-center font-bold flex-shrink-0`}>
+      <info.Icon size={size === 'sm' ? 14 : 18} />
+    </div>
+  );
+}
 
 export default function ProjectDetail() {
   const { t } = useTranslation();
@@ -34,6 +65,7 @@ export default function ProjectDetail() {
   const [files, setFiles] = useState([]);
   const [previewFile, setPreviewFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [csvData, setCsvData] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef(null);
@@ -103,11 +135,36 @@ export default function ProjectDetail() {
   useEffect(() => { fetchData(); }, [id]);
 
   useEffect(() => {
-    if (!previewFile) { setPreviewUrl(null); return; }
+    if (!previewFile) { setPreviewUrl(null); setCsvData(null); return; }
     let cancelled = false;
-    fileApi.preview(previewFile._id).then((url) => {
-      if (!cancelled) setPreviewUrl(url);
-    });
+    const ext = previewFile.originalName?.split('.').pop()?.toLowerCase();
+
+    if (ext === 'csv' || previewFile.mimetype === 'text/csv') {
+      const token = getAccessToken();
+      fetch(`${API_BASE}/api/files/${previewFile._id}/preview`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }).then(r => r.text()).then(text => {
+        if (cancelled) return;
+        const lines = text.split('\n').filter(l => l.trim());
+        const rows = lines.map(l => {
+          const cells = [];
+          let current = '';
+          let inQuotes = false;
+          for (let i = 0; i < l.length; i++) {
+            if (l[i] === '"') { inQuotes = !inQuotes; }
+            else if (l[i] === ',' && !inQuotes) { cells.push(current.trim()); current = ''; }
+            else { current += l[i]; }
+          }
+          cells.push(current.trim());
+          return cells;
+        });
+        setCsvData(rows);
+      }).catch(() => {});
+    } else {
+      fileApi.preview(previewFile._id).then((url) => {
+        if (!cancelled) setPreviewUrl(url);
+      });
+    }
     return () => { cancelled = true; if (previewUrl) URL.revokeObjectURL(previewUrl); };
   }, [previewFile]);
 
@@ -303,11 +360,11 @@ export default function ProjectDetail() {
             ) : (
               <div className="space-y-2">
                 {files.map((f) => (
-                  <div key={f._id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <FileText size={16} className="text-slate-400" />
-                      <div>
-                        <div className="text-sm font-medium">{f.originalName}</div>
+                  <div key={f._id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <FileThumbnail file={f} />
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium truncate">{f.originalName}</div>
                         <div className="text-xs text-slate-500">{f.category} • {(f.size / 1024).toFixed(1)} KB</div>
                       </div>
                     </div>
@@ -364,9 +421,12 @@ export default function ProjectDetail() {
 
       {previewFile && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4" onClick={() => setPreviewFile(null)}>
-          <div className="bg-white rounded-xl w-full max-w-full sm:max-w-3xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl w-full max-w-full sm:max-w-4xl max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-800 truncate">{previewFile.originalName}</h3>
+              <div className="flex items-center gap-2 min-w-0">
+                <FileThumbnail file={previewFile} size="sm" />
+                <h3 className="text-sm font-semibold text-slate-800 truncate">{previewFile.originalName}</h3>
+              </div>
               <div className="flex items-center gap-2">
                 <a href={fileApi.download(previewFile._id)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded">
                   <Download size={16} />
@@ -377,19 +437,52 @@ export default function ProjectDetail() {
               </div>
             </div>
             <div className="flex-1 overflow-auto p-4">
-              {!previewUrl ? (
+              {!previewUrl && !csvData ? (
                 <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>
               ) : previewFile.mimetype?.startsWith('image/') ? (
                 <img src={previewUrl} alt={previewFile.originalName} className="max-w-full mx-auto rounded-lg" />
               ) : previewFile.mimetype === 'application/pdf' ? (
                 <iframe src={previewUrl} className="w-full h-[70vh] rounded-lg border" title={previewFile.originalName} />
+              ) : csvData ? (
+                <div className="overflow-auto">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      {csvData.length > 0 && (
+                        <tr>
+                          {csvData[0].map((cell, i) => (
+                            <th key={i} className="px-3 py-2 bg-slate-100 text-left text-xs font-semibold text-slate-700 border border-slate-200 sticky top-0">{cell}</th>
+                          ))}
+                        </tr>
+                      )}
+                    </thead>
+                    <tbody>
+                      {csvData.slice(1).map((row, ri) => (
+                        <tr key={ri} className="hover:bg-slate-50">
+                          {row.map((cell, ci) => (
+                            <td key={ci} className="px-3 py-2 border border-slate-200 text-slate-700">{cell}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
-                <div className="text-center py-8 text-slate-500">
-                  <FileText size={48} className="mx-auto mb-3 text-slate-300" />
-                  <p className="text-sm">{t('projects.previewNotAvailable')}</p>
-                  <a href={fileApi.download(previewFile._id)} className="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline">
-                    <Download size={14} /> {t('projects.downloadInstead')}
-                  </a>
+                <div className="text-center py-8">
+                  {(() => {
+                    const info = getFileTypeInfo(previewFile.originalName, previewFile.mimetype);
+                    return (
+                      <>
+                        <div className={`w-20 h-20 mx-auto mb-4 ${info.color} rounded-2xl flex items-center justify-center`}>
+                          <info.Icon size={36} />
+                        </div>
+                        <p className="text-sm font-medium text-slate-700 mb-1">{info.label} {t('projects.file')}</p>
+                        <p className="text-xs text-slate-500 mb-4">{previewFile.originalName} • {(previewFile.size / 1024).toFixed(1)} KB</p>
+                        <a href={fileApi.download(previewFile._id)} className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                          <Download size={16} /> {t('projects.downloadToView')}
+                        </a>
+                      </>
+                    );
+                  })()}
                 </div>
               )}
             </div>

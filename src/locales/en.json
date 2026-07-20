@@ -278,6 +278,8 @@
     "noDocuments": "No documents uploaded / لا توجد مستندات مرفوعة",
     "previewNotAvailable": "Preview not available for this file type / المعاينة غير متاحة لهذا النوع من الملفات",
     "downloadInstead": "Download instead / بدلاً من التنزيل",
+    "downloadToView": "Download to View / تنزيل للمشاهدة",
+    "file": "File / ملف",
     "recentActivity": "Recent Activity / النشاط الأخير",
     "noActivity": "No activity yet / لا يوجد نشاط بعد",
     "requestSubmitted": "Request submitted / تم إرسال الطلب",
