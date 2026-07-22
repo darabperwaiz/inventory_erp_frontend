@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import useAuthStore from './store/authStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import SplashScreen from './components/SplashScreen';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import MaterialList from './pages/Inventory/MaterialList';
@@ -14,16 +15,19 @@ import ProjectDetail from './pages/Projects/ProjectDetail';
 import Reports from './pages/Reports/Reports';
 import UserList from './pages/Users/UserList';
 import AuditLogs from './pages/AuditLogs';
-import Approvals from './pages/Approvals';
-import ReorderAlerts from './pages/ReorderAlerts';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 
 function App() {
   const { isLoading, initialize } = useAuthStore();
+  const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
     initialize();
+  }, []);
+
+  const handleSplashComplete = useCallback(() => {
+    setShowSplash(false);
   }, []);
 
   if (isLoading) {
@@ -36,6 +40,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Toaster position="top-right" />
       <PWAInstallPrompt />
       <div>
