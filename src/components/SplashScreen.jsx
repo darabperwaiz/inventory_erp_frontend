@@ -1,33 +1,71 @@
 import { useState, useEffect } from 'react';
 
 export default function SplashScreen({ onComplete }) {
-  const [phase, setPhase] = useState('enter');
+  const [phase, setPhase] = useState('square');
 
   useEffect(() => {
-    const timer1 = setTimeout(() => setPhase('visible'), 50);
-    const timer2 = setTimeout(() => setPhase('exit'), 2200);
-    const timer3 = setTimeout(() => onComplete(), 3000);
-    return () => { clearTimeout(timer1); clearTimeout(timer2); clearTimeout(timer3); };
+    const t1 = setTimeout(() => setPhase('logo'), 600);
+    const t2 = setTimeout(() => setPhase('shrink'), 1400);
+    const t3 = setTimeout(() => setPhase('exit'), 2600);
+    const t4 = setTimeout(() => onComplete(), 3400);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, [onComplete]);
 
   return (
-    <div className={`fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 transition-opacity duration-700 ${phase === 'exit' ? 'opacity-0' : 'opacity-100'}`}>
-      <div className={`text-center transition-all duration-700 ${phase === 'enter' ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}>
-        <div className="mb-6">
-          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
-            <span className="text-white text-3xl font-bold">D</span>
-          </div>
+    <div className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#0f172a] transition-opacity duration-800 ${phase === 'exit' ? 'opacity-0' : 'opacity-100'}`}>
+      <div className="relative" style={{ width: 320, height: 100 }}>
+
+        {/* Blue square — starts centered, shrinks into logo position */}
+        <div
+          className="absolute bg-[#0047FF] transition-all ease-in-out"
+          style={{
+            width: phase === 'square' ? 60 : phase === 'logo' ? 60 : 10,
+            height: phase === 'square' ? 60 : phase === 'logo' ? 60 : 10,
+            borderRadius: phase === 'shrink' || phase === 'exit' ? 2 : 6,
+            top: phase === 'shrink' || phase === 'exit' ? 32 : '50%',
+            left: phase === 'shrink' || phase === 'exit' ? 289 : '50%',
+            transform: phase === 'shrink' || phase === 'exit' ? 'translate(0, 0)' : 'translate(-50%, -50%)',
+            transitionDuration: phase === 'shrink' ? '800ms' : '600ms',
+          }}
+        />
+
+        {/* Logo SVG — fades in after square appears */}
+        <div
+          className="absolute inset-0 flex items-center justify-center transition-opacity"
+          style={{
+            opacity: phase === 'square' ? 0 : 1,
+            transitionDuration: '800ms',
+          }}
+        >
+          <img src="/brand-logo.svg" alt="dotcomdotin" className="h-12 w-auto" />
         </div>
-        <h1 className="text-4xl font-bold text-white tracking-tight">
-          dotcomdot<span className="text-blue-400">in</span>
-        </h1>
-        <p className="text-slate-400 mt-3 text-sm tracking-widest uppercase">Inventory & Project Management</p>
-        <div className="mt-8 flex justify-center">
-          <div className="flex gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '150ms' }} />
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '300ms' }} />
-          </div>
+
+        {/* Subtitle */}
+        <div
+          className="absolute left-0 right-0 text-center transition-opacity"
+          style={{
+            bottom: -36,
+            opacity: phase === 'shrink' || phase === 'exit' ? 1 : 0,
+            transitionDuration: '600ms',
+          }}
+        >
+          <p className="text-slate-400 text-xs tracking-[0.3em] uppercase">Inventory & Project Management</p>
+        </div>
+
+        {/* Loading dots */}
+        <div
+          className="absolute flex justify-center gap-1.5 transition-opacity"
+          style={{
+            bottom: -64,
+            left: 0,
+            right: 0,
+            opacity: phase === 'shrink' || phase === 'exit' ? 1 : 0,
+            transitionDuration: '400ms',
+          }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '300ms' }} />
         </div>
       </div>
     </div>
