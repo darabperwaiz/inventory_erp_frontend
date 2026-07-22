@@ -119,20 +119,27 @@ export default function SplashScreen({ onComplete }) {
           </g>
         </svg>
 
-        <p className="subtitle-text text-slate-400 text-[10px] tracking-[0.35em] uppercase mt-4">
+        <p className="subtitle-text text-slate-400 text-xs tracking-[0.3em] uppercase mt-4">
           Manage. Track. Deliver.
         </p>
 
-        <div className="dots-container flex gap-1 mt-3">
-          <span className="w-1 h-1 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-          <span className="w-1 h-1 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '150ms' }} />
-          <span className="w-1 h-1 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+        <div className="dots-container flex gap-1.5 mt-3">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ animation: 'dotBounce 0.6s ease infinite', animationDelay: '0ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ animation: 'dotBounce 0.6s ease infinite', animationDelay: '150ms' }} />
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" style={{ animation: 'dotBounce 0.6s ease infinite', animationDelay: '300ms' }} />
         </div>
       </div>
 
-      <p className="brand-url fixed bottom-5 left-0 right-0 text-center text-[9px] tracking-[0.15em] text-slate-500">
+      <p className="brand-url fixed bottom-5 left-0 right-0 text-center text-[11px] tracking-[0.15em] text-slate-500">
         www.dotcomdotin.com
       </p>
+
+      <style>{`
+        @keyframes dotBounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+      `}</style>
     </div>
   );
 }
