@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, Plus, X, Trash2, Mail, Phone, MapPin, StickyNote } from 'lucide-react';
+import { ArrowLeft, Plus, X, Trash2, Mail, Phone, MapPin, StickyNote } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supplierApi } from '../../api/supplier.api';
 import { useConfirm } from '../../components/ConfirmModal';
@@ -14,7 +14,7 @@ export default function SupplierDetail() {
   const [supplier, setSupplier] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showAssign, setShowAssign] = useState(false);
+  const [showAdd, setShowAdd] = useState(false);
 
   const fetchData = async () => {
     try {
@@ -35,7 +35,7 @@ export default function SupplierDetail() {
 
   useEffect(() => { fetchData(); }, [id]);
 
-  const handleUnassign = async (material) => {
+  const handleRemove = async (material) => {
     const confirmed = await confirm({
       title: t('app.confirm'),
       message: `${t('suppliers.removeMaterial')} "${material.name}"?`,
@@ -109,10 +109,10 @@ export default function SupplierDetail() {
         <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
           <h2 className="font-semibold text-slate-800">{t('suppliers.linkedMaterials')} ({materials.length})</h2>
           <button
-            onClick={() => setShowAssign(true)}
+            onClick={() => setShowAdd(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
           >
-            <Plus size={14} /> {t('suppliers.assignMaterial')}
+            <Plus size={14} /> {t('suppliers.addMaterial')}
           </button>
         </div>
         <div className="overflow-x-auto">
@@ -142,7 +142,7 @@ export default function SupplierDetail() {
                     <td className="px-5 py-3 text-right font-medium text-slate-800">{m.availableQuantity}</td>
                     <td className="px-5 py-3 text-right">
                       <button
-                        onClick={() => handleUnassign(m)}
+                        onClick={() => handleRemove(m)}
                         className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded"
                         title={t('suppliers.removeMaterial')}
                       >
@@ -157,75 +157,106 @@ export default function SupplierDetail() {
         </div>
       </div>
 
-      {showAssign && (
-        <AssignMaterial
+      {showAdd && (
+        <AddMaterial
           supplierId={id}
-          onClose={() => setShowAssign(false)}
-          onSuccess={() => { setShowAssign(false); fetchData(); }}
+          onClose={() => setShowAdd(false)}
+          onSuccess={() => { setShowAdd(false); fetchData(); }}
         />
       )}
     </div>
   );
 }
 
-function AssignMaterial({ supplierId, onClose, onSuccess }) {
+function AddMaterial({ supplierId, onClose, onSuccess }) {
   const { t } = useTranslation();
-  const [materials, setMaterials] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [assigning, setAssigning] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    category: '',
+    unit: '',
+    subcategory: '',
+    description: '',
+    minimumStock: 0,
+  });
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    supplierApi.getUnassigned().then(({ data }) => {
-      setMaterials(data.data || []);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, []);
-
-  const handleAssign = async (material) => {
-    setAssigning(material._id);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!form.name.trim() || !form.category.trim() || !form.unit.trim()) {
+      toast.error(t('suppliers.materialFieldsRequired'));
+      return;
+    }
+    setLoading(true);
     try {
-      await supplierApi.assignMaterial(supplierId, material._id);
-      toast.success(t('suppliers.materialAssigned'));
-      setMaterials((prev) => prev.filter((m) => m._id !== material._id));
+      await supplierApi.addMaterial(supplierId, form);
+      toast.success(t('suppliers.materialCreated'));
+      onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('suppliers.saveError'));
     } finally {
-      setAssigning(null);
+      setLoading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg max-h-[80vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-md" onClick={(e) => e.stopPropagation()}>
         <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold">{t('suppliers.assignMaterial')}</h3>
+          <h3 className="text-lg font-semibold">{t('suppliers.addMaterial')}</h3>
           <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded"><X size={18} /></button>
         </div>
-        <div className="flex-1 overflow-y-auto p-5">
-          {loading ? (
-            <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>
-          ) : materials.length === 0 ? (
-            <div className="text-center py-8 text-slate-400">{t('suppliers.allAssigned')}</div>
-          ) : (
-            <div className="space-y-2">
-              {materials.map((m) => (
-                <div key={m._id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50">
-                  <div>
-                    <div className="font-medium text-slate-800 text-sm">{m.name}</div>
-                    <div className="text-xs text-slate-400">{m.materialCode} | {m.category} | {m.unit}</div>
-                  </div>
-                  <button
-                    onClick={() => handleAssign(m)}
-                    disabled={assigning === m._id}
-                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {assigning === m._id ? '...' : t('suppliers.assign')}
-                  </button>
-                </div>
-              ))}
+        <form onSubmit={handleSubmit} className="p-5 space-y-3">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.materialName')} *</label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.category')} *</label>
+              <input
+                type="text"
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
             </div>
-          )}
-        </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.unit')} *</label>
+              <input
+                type="text"
+                value={form.unit}
+                onChange={(e) => setForm({ ...form, unit: e.target.value })}
+                placeholder="pcs, meters, kg"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.description')}</label>
+            <input
+              type="text"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">
+              {t('app.cancel')}
+            </button>
+            <button type="submit" disabled={loading} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">
+              {loading ? t('app.loading') : t('suppliers.addMaterial')}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

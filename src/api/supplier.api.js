@@ -11,4 +11,5 @@ export const supplierApi = {
   assignMaterial: (id, materialId) => client.post(`/suppliers/${id}/materials`, { materialId }),
   unassignMaterial: (id, materialId) => client.delete(`/suppliers/${id}/materials/${materialId}`),
   getUnassigned: () => client.get('/suppliers/unassigned'),
+  addMaterial: (id, data) => client.post(`/suppliers/${id}/materials/add`, data),
 };

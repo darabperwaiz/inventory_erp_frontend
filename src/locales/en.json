@@ -503,6 +503,9 @@
     "materialAssigned": "Material assigned / تمت إضافة المادة",
     "materialRemoved": "Material removed / تمت إزالة المادة",
     "removeMaterial": "Remove Material / إزالة المادة",
-    "allAssigned": "All materials are assigned / جميع المواد مضافة"
+    "allAssigned": "All materials are assigned / جميع المواد مضافة",
+    "addMaterial": "Add Material / إضافة مادة",
+    "materialCreated": "Material added / تمت إضافة المادة",
+    "materialFieldsRequired": "Name, category and unit are required / الاسم والتصنيف والوحدة مطلوبة"
   }
 }
