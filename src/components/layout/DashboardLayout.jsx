@@ -8,6 +8,7 @@ const routeTitles = {
   '/projects': 'Projects',
   '/inventory': 'Inventory',
   '/reports': 'Reports',
+  '/procurement': 'Suppliers',
   '/approvals': 'Approvals',
   '/users': 'Users',
   '/audit-logs': 'Audit Logs',

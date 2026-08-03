@@ -52,7 +52,8 @@
     "reorderAlerts": "Reorder Alerts / تنبيهات إعادة الطلب",
     "users": "Users / المستخدمون",
     "auditLogs": "Audit Logs / سجلات التدقيق",
-    "settings": "Settings / الإعدادات"
+    "settings": "Settings / الإعدادات",
+    "procurement": "Suppliers / الموردون"
   },
   "auth": {
     "login": "Login / تسجيل الدخول",
@@ -466,5 +467,31 @@
     "createdAt": "Created / أنشئ في",
     "updatedAt": "Updated / حُدّث في",
     "createdBy": "Created by / أنشئ بواسطة"
+  },
+  "suppliers": {
+    "title": "Suppliers / الموردون",
+    "supplier": "Supplier / مورد",
+    "addSupplier": "Add Supplier / إضافة مورد",
+    "code": "Code / الكود",
+    "name": "Name / الاسم",
+    "contactPerson": "Contact Person / شخص الاتصال",
+    "email": "Email / البريد الإلكتروني",
+    "phone": "Phone / الهاتف",
+    "address": "Address / العنوان",
+    "notes": "Notes / ملاحظات",
+    "noSuppliers": "No suppliers found / لا يوجد موردون",
+    "loadError": "Failed to load suppliers / فشل تحميل الموردين",
+    "deleted": "Supplier deleted / تم حذف المورد",
+    "deleteError": "Failed to delete supplier / فشل حذف المورد",
+    "created": "Supplier created / تم إنشاء المورد",
+    "updated": "Supplier updated / تم تحديث المورد",
+    "saveError": "Failed to save supplier / فشل حفظ المورد",
+    "nameRequired": "Supplier name is required / اسم المورد مطلوب",
+    "viewMaterials": "View Materials / عرض المواد",
+    "linkedMaterials": "Linked Materials / المواد المرتبطة",
+    "noMaterials": "No materials linked / لا توجد مواد مرتبطة",
+    "loadMaterialsError": "Failed to load materials / فشل تحميل المواد",
+    "preferredSupplier": "Preferred Supplier / المورد المفضل",
+    "noSupplier": "No supplier / بدون مورد"
   }
 }

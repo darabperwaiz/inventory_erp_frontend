@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
 import { userApi } from '../../api/user.api';
 import { materialApi } from '../../api/material.api';
+import { supplierApi } from '../../api/supplier.api';
 import { API_BASE } from '../../api/client';
 import { useConfirm } from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
@@ -36,7 +37,12 @@ export default function MaterialList() {
     try {
       setLoading(true);
       const { data } = await materialApi.getAll({ page, limit: 10, search });
-      setMaterials(data.data);
+      const seen = new Set();
+      setMaterials((data.data || []).filter((m) => {
+        if (seen.has(m._id)) return false;
+        seen.add(m._id);
+        return true;
+      }));
       setPagination(data.pagination);
     } catch (err) {
       toast.error(t('inventory.loadError'));
@@ -242,7 +248,12 @@ export default function MaterialList() {
                       )}
                     </td>
                     <td className="px-4 py-3 font-mono text-xs text-slate-500">{m.materialCode}</td>
-                    <td className="px-4 py-3 font-medium text-slate-800">{m.name}</td>
+                    <td className="px-4 py-3">
+                      <div className="font-medium text-slate-800">{m.name}</div>
+                      {m.supplier && (
+                        <div className="text-xs text-slate-400 mt-0.5">{m.supplier.name}</div>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-slate-600">{m.category}</td>
                     <td className="px-4 py-3 text-slate-600">{m.unit}</td>
                     <td className="px-4 py-3 text-right font-medium text-slate-800">{m.availableQuantity}</td>
@@ -531,11 +542,17 @@ function MaterialForm({ material, onClose, onSuccess }) {
     brand: material?.brand || '',
     minimumStock: material?.minimumStock || 0,
     status: material?.status || 'active',
+    supplier: material?.supplier?._id || material?.supplier || '',
   });
   const [loading, setLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState(material?.image ? `${API_BASE}/${material.image}` : null);
   const [imageFile, setImageFile] = useState(null);
   const [imageRemoved, setImageRemoved] = useState(false);
+  const [suppliers, setSuppliers] = useState([]);
+
+  useEffect(() => {
+    supplierApi.getAllDropdown().then(({ data }) => setSuppliers(data.data || [])).catch(() => {});
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -643,6 +660,16 @@ function MaterialForm({ material, onClose, onSuccess }) {
                 <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('inventory.brand')}</label>
                 <input type="text" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('suppliers.preferredSupplier')}</label>
+                <select value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })}
+                  className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                  <option value="">{t('suppliers.noSupplier')}</option>
+                  {suppliers.map((s) => (
+                    <option key={s._id} value={s._id}>{s.supplierCode} - {s.name}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('inventory.minimumStock')}</label>
