@@ -493,6 +493,8 @@
     "loadMaterialsError": "Failed to load materials / فشل تحميل المواد",
     "preferredSupplier": "Preferred Supplier / المورد المفضل",
     "noSupplier": "No supplier / بدون مورد",
+    "brand": "Brand / العلامة التجارية",
+    "description": "Description / الوصف",
     "details": "Supplier Details / تفاصيل المورد",
     "materialName": "Material Name / اسم المادة",
     "category": "Category / التصنيف",
