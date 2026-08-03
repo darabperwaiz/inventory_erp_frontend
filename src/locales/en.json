@@ -506,6 +506,10 @@
     "allAssigned": "All materials are assigned / جميع المواد مضافة",
     "addMaterial": "Add Material / إضافة مادة",
     "materialCreated": "Material added / تمت إضافة المادة",
-    "materialFieldsRequired": "Name, category and unit are required / الاسم والتصنيف والوحدة مطلوبة"
+    "materialFieldsRequired": "Name, category and unit are required / الاسم والتصنيف والوحدة مطلوبة",
+    "price": "Price / السعر",
+    "tax": "Tax / الضريبة",
+    "leadTime": "Lead Time / مدة التسليم",
+    "minOrderQty": "Min Order Qty / الحد الأدنى للطلب"
   }
 }
