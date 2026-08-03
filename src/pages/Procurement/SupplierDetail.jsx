@@ -116,16 +116,6 @@ export default function SupplierDetail() {
               <div className="font-medium">{supplier.taxRegistrationNo}</div>
             </div>
           )}
-          {supplier.paymentTerms && (
-            <div className="text-sm text-slate-700">
-              <span className="text-slate-400 text-xs">{t('suppliers.paymentTerms')}</span>
-              <div className="font-medium">{supplier.paymentTerms}</div>
-            </div>
-          )}
-          <div className="text-sm text-slate-700">
-            <span className="text-slate-400 text-xs">{t('suppliers.currency')}</span>
-            <div className="font-medium">{supplier.currency}</div>
-          </div>
           <div className="text-sm text-slate-700">
             <span className="text-slate-400 text-xs">{t('suppliers.status')}</span>
             <div>

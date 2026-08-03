@@ -346,8 +346,6 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
     country: supplier?.country || '',
     gstVatNumber: supplier?.gstVatNumber || '',
     taxRegistrationNo: supplier?.taxRegistrationNo || '',
-    paymentTerms: supplier?.paymentTerms || '',
-    currency: supplier?.currency || 'USD',
     status: supplier?.status || 'active',
     notes: supplier?.notes || '',
   });
@@ -482,32 +480,6 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
                   onChange={(e) => setForm({ ...form, taxRegistrationNo: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.paymentTerms')}</label>
-                <input
-                  type="text"
-                  value={form.paymentTerms}
-                  onChange={(e) => setForm({ ...form, paymentTerms: e.target.value })}
-                  placeholder="Net 30, Net 60..."
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.currency')}</label>
-                <select
-                  value={form.currency}
-                  onChange={(e) => setForm({ ...form, currency: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="USD">USD</option>
-                  <option value="EUR">EUR</option>
-                  <option value="GBP">GBP</option>
-                  <option value="AED">AED</option>
-                  <option value="SAR">SAR</option>
-                  <option value="INR">INR</option>
-                  <option value="PKR">PKR</option>
-                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.status')}</label>
