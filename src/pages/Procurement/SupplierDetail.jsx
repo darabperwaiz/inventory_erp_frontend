@@ -168,7 +168,9 @@ export default function SupplierDetail() {
                     <td className="px-5 py-3 font-medium text-slate-800">{m.name}</td>
                     <td className="px-5 py-3 text-slate-600">{m.category}</td>
                     <td className="px-5 py-3 text-slate-600">{m.unit}</td>
-                    <td className="px-5 py-3 text-right font-medium text-slate-800">{m.availableQuantity}</td>
+                    <td className="px-5 py-3 text-right font-medium text-slate-800">
+                      {m.availableQuantity > 0 ? m.availableQuantity : <span className="text-slate-400 text-xs font-normal">No stock received</span>}
+                    </td>
                     <td className="px-5 py-3 text-right">
                       <button
                         onClick={() => handleRemove(m)}
