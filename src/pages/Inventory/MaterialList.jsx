@@ -660,7 +660,9 @@ function ReceiveMaterial({ onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    materialApi.getAll({ limit: 100 }).then(({ data }) => setMaterials(data.data));
+    materialApi.getAll({ limit: 100 }).then(({ data }) => {
+      setMaterials(data.data || []);
+    });
     userApi.getAll({ role: 'admin', limit: 50 }).then(({ data }) => {
       const admins = data.data || [];
       userApi.getAll({ role: 'inventory_manager', limit: 50 }).then(({ data: data2 }) => {
@@ -669,6 +671,16 @@ function ReceiveMaterial({ onClose, onSuccess }) {
       });
     });
   }, []);
+
+  const handleMaterialChange = (e) => {
+    const materialId = e.target.value;
+    const selected = materials.find((m) => m._id === materialId);
+    setForm({
+      ...form,
+      materialId,
+      supplier: selected?.supplier?.name || '',
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -695,7 +707,7 @@ function ReceiveMaterial({ onClose, onSuccess }) {
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('inventory.materialName')} *</label>
             <select
               value={form.materialId}
-              onChange={(e) => setForm({ ...form, materialId: e.target.value })}
+              onChange={handleMaterialChange}
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             >
