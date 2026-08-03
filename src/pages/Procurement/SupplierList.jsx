@@ -243,7 +243,7 @@ export default function SupplierList() {
                             style={{ top: dropdownPos.top, left: dropdownPos.left }}
                           >
                             <button
-                              onClick={() => handleExpandMaterials(s)}
+                              onClick={(e) => { e.stopPropagation(); handleExpandMaterials(s); }}
                               className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
                             >
                               {expandedSupplier === s._id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -252,13 +252,13 @@ export default function SupplierList() {
                             {canManage && (
                               <>
                                 <button
-                                  onClick={() => { setEditingSupplier(s); setShowForm(true); setOpenDropdown(null); }}
+                                  onClick={(e) => { e.stopPropagation(); setEditingSupplier(s); setShowForm(true); setOpenDropdown(null); }}
                                   className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 flex items-center gap-2"
                                 >
                                   <Pencil size={14} /> {t('app.edit')}
                                 </button>
                                 <button
-                                  onClick={() => { handleDelete(s); setOpenDropdown(null); }}
+                                  onClick={(e) => { e.stopPropagation(); handleDelete(s); setOpenDropdown(null); }}
                                   className="w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-red-600 flex items-center gap-2"
                                 >
                                   <Trash2 size={14} /> {t('app.delete')}
