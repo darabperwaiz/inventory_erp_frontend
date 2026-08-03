@@ -8,4 +8,7 @@ export const supplierApi = {
   delete: (id) => client.delete(`/suppliers/${id}`),
   getMaterials: (id) => client.get(`/suppliers/${id}/materials`),
   getAllDropdown: () => client.get('/suppliers/all'),
+  assignMaterial: (id, materialId) => client.post(`/suppliers/${id}/materials`, { materialId }),
+  unassignMaterial: (id, materialId) => client.delete(`/suppliers/${id}/materials/${materialId}`),
+  getUnassigned: () => client.get('/suppliers/unassigned'),
 };

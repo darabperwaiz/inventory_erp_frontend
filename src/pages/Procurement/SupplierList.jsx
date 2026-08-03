@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Truck, MoreVertical, Pencil, Trash2, X, Package, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
@@ -8,6 +9,7 @@ import toast from 'react-hot-toast';
 
 export default function SupplierList() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const confirm = useConfirm();
   const [suppliers, setSuppliers] = useState([]);
@@ -203,7 +205,8 @@ export default function SupplierList() {
                 suppliers.map((s) => (
                   <tr
                     key={s._id}
-                    className={`border-b border-slate-100 hover:bg-slate-50 ${selected.includes(s._id) ? 'bg-blue-50' : ''}`}
+                    onClick={() => navigate(`/procurement/${s._id}`)}
+                    className={`border-b border-slate-100 hover:bg-slate-50 cursor-pointer ${selected.includes(s._id) ? 'bg-blue-50' : ''}`}
                   >
                     {canManage && (
                       <td className="px-4 py-3">
@@ -211,6 +214,7 @@ export default function SupplierList() {
                           type="checkbox"
                           checked={selected.includes(s._id)}
                           onChange={() => toggleSelect(s._id)}
+                          onClick={(e) => e.stopPropagation()}
                           className="rounded"
                         />
                       </td>
@@ -224,6 +228,7 @@ export default function SupplierList() {
                       <div className="relative" ref={dropdownRef}>
                         <button
                           onClick={(e) => {
+                            e.stopPropagation();
                             const rect = e.currentTarget.getBoundingClientRect();
                             setDropdownPos({ top: rect.bottom + 4, left: rect.right - 192 });
                             setOpenDropdown(openDropdown === s._id ? null : s._id);

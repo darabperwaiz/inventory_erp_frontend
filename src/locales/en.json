@@ -492,6 +492,17 @@
     "noMaterials": "No materials linked / لا توجد مواد مرتبطة",
     "loadMaterialsError": "Failed to load materials / فشل تحميل المواد",
     "preferredSupplier": "Preferred Supplier / المورد المفضل",
-    "noSupplier": "No supplier / بدون مورد"
+    "noSupplier": "No supplier / بدون مورد",
+    "details": "Supplier Details / تفاصيل المورد",
+    "materialName": "Material Name / اسم المادة",
+    "category": "Category / التصنيف",
+    "unit": "Unit / الوحدة",
+    "availableQty": "Available / المتوفر",
+    "assignMaterial": "Assign Material / إضافة مادة",
+    "assign": "Assign / إضافة",
+    "materialAssigned": "Material assigned / تمت إضافة المادة",
+    "materialRemoved": "Material removed / تمت إزالة المادة",
+    "removeMaterial": "Remove Material / إزالة المادة",
+    "allAssigned": "All materials are assigned / جميع المواد مضافة"
   }
 }

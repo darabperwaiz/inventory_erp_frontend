@@ -29,6 +29,8 @@ export default function DashboardLayout() {
       title = 'Project Detail | ERP System';
     } else if (path.match(/\/inventory\/[^/]+\/history/)) {
       title = 'Material History | ERP System';
+    } else if (path.match(/\/procurement\/[^/]+/)) {
+      title = 'Supplier Detail | ERP System';
     }
 
     document.title = title;

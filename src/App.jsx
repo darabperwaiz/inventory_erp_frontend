@@ -14,6 +14,7 @@ import ProjectList from './pages/Projects/ProjectList';
 import ProjectDetail from './pages/Projects/ProjectDetail';
 import Reports from './pages/Reports/Reports';
 import SupplierList from './pages/Procurement/SupplierList';
+import SupplierDetail from './pages/Procurement/SupplierDetail';
 import UserList from './pages/Users/UserList';
 import AuditLogs from './pages/AuditLogs';
 import Settings from './pages/Settings';
@@ -66,6 +67,14 @@ function App() {
             element={
               <ProtectedRoute roles={['admin', 'inventory_manager']}>
                 <SupplierList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="procurement/:id"
+            element={
+              <ProtectedRoute roles={['admin', 'inventory_manager']}>
+                <SupplierDetail />
               </ProtectedRoute>
             }
           />
