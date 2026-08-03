@@ -509,7 +509,6 @@
     "materialFieldsRequired": "Name, category and unit are required / الاسم والتصنيف والوحدة مطلوبة",
     "price": "Price / السعر",
     "tax": "Tax / الضريبة",
-    "leadTime": "Lead Time / مدة التسليم",
     "minOrderQty": "Min Order Qty / الحد الأدنى للطلب"
   }
 }
