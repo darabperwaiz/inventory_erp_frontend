@@ -11,7 +11,7 @@ export default function SupplierList() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const confirm = useConfirm();
+  const { confirm, ConfirmModal } = useConfirm();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -65,11 +65,12 @@ export default function SupplierList() {
   }, []);
 
   const handleDelete = async (supplier) => {
-    const confirmed = await confirm({
-      title: t('app.confirm'),
-      message: `${t('app.delete')} "${supplier.name}"?`,
-      variant: 'danger',
-    });
+    const confirmed = await confirm(
+      `${t('app.delete')} "${supplier.name}"?`,
+      t('app.confirm'),
+      null,
+      'danger'
+    );
     if (!confirmed) return;
 
     try {
@@ -83,11 +84,12 @@ export default function SupplierList() {
   };
 
   const handleBulkDelete = async () => {
-    const confirmed = await confirm({
-      title: t('app.confirm'),
-      message: `${t('app.delete')} ${selected.length} ${t('suppliers.supplier')}?`,
-      variant: 'danger',
-    });
+    const confirmed = await confirm(
+      `${t('app.delete')} ${selected.length} ${t('suppliers.supplier')}?`,
+      t('app.confirm'),
+      null,
+      'danger'
+    );
     if (!confirmed) return;
 
     try {
@@ -329,6 +331,7 @@ export default function SupplierList() {
           onSuccess={() => { setShowForm(false); setEditingSupplier(null); fetchSuppliers(); }}
         />
       )}
+      {ConfirmModal}
     </div>
   );
 }

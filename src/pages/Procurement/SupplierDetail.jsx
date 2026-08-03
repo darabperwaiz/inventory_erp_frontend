@@ -10,7 +10,7 @@ export default function SupplierDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const confirm = useConfirm();
+  const { confirm, ConfirmModal } = useConfirm();
   const [supplier, setSupplier] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,11 +36,12 @@ export default function SupplierDetail() {
   useEffect(() => { fetchData(); }, [id]);
 
   const handleRemove = async (material) => {
-    const confirmed = await confirm({
-      title: t('app.confirm'),
-      message: `${t('suppliers.removeMaterial')} "${material.name}"?`,
-      variant: 'warning',
-    });
+    const confirmed = await confirm(
+      `${t('suppliers.removeMaterial')} "${material.name}"?`,
+      t('app.confirm'),
+      null,
+      'warning'
+    );
     if (!confirmed) return;
 
     try {
@@ -195,6 +196,7 @@ export default function SupplierDetail() {
           onSuccess={() => { setShowAdd(false); fetchData(); }}
         />
       )}
+      {ConfirmModal}
     </div>
   );
 }
