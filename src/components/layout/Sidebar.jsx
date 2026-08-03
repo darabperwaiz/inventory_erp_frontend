@@ -24,10 +24,10 @@ export default function Sidebar() {
 
   const navItems = [
     { to: '/', icon: LayoutDashboard, label: t('nav.dashboard'), shortLabel: 'Home', roles: ['admin', 'project_manager', 'inventory_manager', 'site_engineer', 'viewer'] },
+    { to: '/procurement', icon: Truck, label: t('nav.procurement'), shortLabel: 'Suppliers', roles: ['admin', 'inventory_manager'] },
     { to: '/projects', icon: FolderKanban, label: t('nav.projects'), shortLabel: 'Projects', roles: ['admin', 'project_manager', 'inventory_manager', 'site_engineer', 'viewer'] },
     { to: '/inventory', icon: Package, label: t('nav.inventory'), shortLabel: 'Stock', roles: ['admin', 'project_manager', 'inventory_manager', 'site_engineer', 'viewer'] },
     { to: '/reports', icon: BarChart3, label: t('nav.reports'), shortLabel: 'Reports', roles: ['admin', 'project_manager', 'inventory_manager', 'site_engineer', 'viewer'] },
-    { to: '/procurement', icon: Truck, label: t('nav.procurement'), shortLabel: 'Suppliers', roles: ['admin', 'inventory_manager'] },
     { to: '/users', icon: Users, label: t('nav.users'), shortLabel: 'Users', roles: ['admin'] },
     { to: '/audit-logs', icon: ScrollText, label: t('nav.auditLogs'), shortLabel: 'Audit', roles: ['admin'] },
     { to: '/settings', icon: Settings, label: t('nav.settings'), shortLabel: 'Settings', roles: ['admin'] },

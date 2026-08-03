@@ -44,7 +44,7 @@
     "installPrompt": "Add to Home Screen / إضافة إلى الشاشة الرئيسية"
   },
   "nav": {
-    "dashboard": "Dashboard / لوحة التحكم",
+    "dashboard": "Dashboard",
     "projects": "Projects / المشاريع",
     "inventory": "Inventory / المخزون",
     "reports": "Reports / التقارير",
