@@ -53,7 +53,7 @@
     "users": "Users / المستخدمون",
     "auditLogs": "Audit Logs / سجلات التدقيق",
     "settings": "Settings / الإعدادات",
-    "procurement": "Suppliers / الموردون"
+    "procurement": "Procurement / المشتريات"
   },
   "auth": {
     "login": "Login / تسجيل الدخول",
