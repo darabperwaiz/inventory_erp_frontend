@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Search, Package, Edit2, Trash2, Eye, History, Image, X, QrCode, SlidersHorizontal, Printer, Barcode, MoreVertical } from 'lucide-react';
+import { Plus, Search, Package, Edit2, Trash2, Eye, History, X, QrCode, SlidersHorizontal, Printer, Barcode, MoreVertical } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
 import { userApi } from '../../api/user.api';
@@ -214,7 +214,6 @@ export default function MaterialList() {
                   <input type="checkbox" checked={selected.length === materials.length && materials.length > 0}
                     onChange={toggleSelectAll} className="rounded border-slate-300" />
                 </th>
-                <th className="text-left px-4 py-3 font-medium text-slate-600">{t('inventory.image')}</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">{t('inventory.materialCode')}</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">{t('inventory.materialName')}</th>
                 <th className="text-left px-4 py-3 font-medium text-slate-600">{t('inventory.category')}</th>
@@ -229,23 +228,14 @@ export default function MaterialList() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="12" className="text-center py-8 text-slate-400">{t('app.loading')}</td></tr>
+                <tr><td colSpan="11" className="text-center py-8 text-slate-400">{t('app.loading')}</td></tr>
               ) : materials.length === 0 ? (
-                <tr><td colSpan="12" className="text-center py-8 text-slate-400">{t('app.noData')}</td></tr>
+                <tr><td colSpan="11" className="text-center py-8 text-slate-400">{t('app.noData')}</td></tr>
               ) : (
                 materials.map((m) => (
                   <tr key={m._id} className={`border-b border-slate-100 hover:bg-slate-50 ${selected.includes(m._id) ? 'bg-blue-50' : ''}`}>
                     <td className="px-4 py-3">
                       <input type="checkbox" checked={selected.includes(m._id)} onChange={() => toggleSelect(m._id)} className="rounded border-slate-300" />
-                    </td>
-                    <td className="px-4 py-3">
-                      {m.image ? (
-                        <img src={`${API_BASE}/${m.image}`} alt={m.name} className="w-10 h-10 rounded-lg object-cover border border-slate-200" />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center">
-                          <Image size={16} className="text-slate-400" />
-                        </div>
-                      )}
                     </td>
                     <td className="px-4 py-3 font-mono text-xs text-slate-500">{m.materialCode}</td>
                     <td className="px-4 py-3">
@@ -545,37 +535,11 @@ function MaterialForm({ material, onClose, onSuccess }) {
     supplier: material?.supplier?._id || material?.supplier || '',
   });
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState(material?.image ? `${API_BASE}/${material.image}` : null);
-  const [imageFile, setImageFile] = useState(null);
-  const [imageRemoved, setImageRemoved] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
 
   useEffect(() => {
     supplierApi.getAllDropdown().then(({ data }) => setSuppliers(data.data || [])).catch(() => {});
   }, []);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setImageRemoved(false);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const handleRemoveImage = async () => {
-    if (material?.image && !imageRemoved) {
-      try {
-        await materialApi.removeImage(material._id);
-        toast.success(t('inventory.imageRemoved'));
-      } catch {
-        toast.error(t('inventory.imageRemoveError'));
-      }
-    }
-    setImageFile(null);
-    setImagePreview(null);
-    setImageRemoved(true);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -590,11 +554,6 @@ function MaterialForm({ material, onClose, onSuccess }) {
         const { data } = await materialApi.create(form);
         materialId = data.data._id;
         toast.success(t('inventory.materialCreated'));
-      }
-      if (imageFile && materialId) {
-        const formData = new FormData();
-        formData.append('image', imageFile);
-        await materialApi.uploadImage(materialId, formData);
       }
       onSuccess();
     } catch (err) {
@@ -612,25 +571,7 @@ function MaterialForm({ material, onClose, onSuccess }) {
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-4 sm:p-5">
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12 sm:col-span-3 flex flex-col items-center">
-              {imagePreview ? (
-                <div className="relative">
-                  <img src={imagePreview} alt="Preview" className="w-24 h-24 object-cover rounded-lg border border-slate-200" />
-                  <button type="button" onClick={handleRemoveImage}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600">
-                    <X size={10} />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center w-24 h-24 border-2 border-dashed border-slate-300 rounded-lg cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-colors">
-                  <Image size={20} className="text-slate-400" />
-                  <span className="text-[9px] text-slate-400 mt-0.5">{t('inventory.photo')}</span>
-                  <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
-                </label>
-              )}
-            </div>
-            <div className="col-span-12 sm:col-span-9 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div>
                 <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('inventory.materialName')} *</label>
                 <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -689,7 +630,6 @@ function MaterialForm({ material, onClose, onSuccess }) {
                 <input type="text" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
               </div>
-            </div>
           </div>
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
             <button type="button" onClick={onClose} className="px-4 py-1.5 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">{t('app.cancel')}</button>
