@@ -77,14 +77,16 @@ export default function SupplierDetail() {
       <div className="bg-white rounded-xl border border-slate-200 p-5">
         <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">{t('suppliers.details')}</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {supplier.contactPerson && (
-            <div className="flex items-center gap-2 text-sm text-slate-700">
-              <span className="font-medium">{supplier.contactPerson}</span>
+          {supplier.companyName && (
+            <div className="text-sm text-slate-700">
+              <span className="text-slate-400 text-xs">{t('suppliers.companyName')}</span>
+              <div className="font-medium">{supplier.companyName}</div>
             </div>
           )}
-          {supplier.email && (
-            <div className="flex items-center gap-2 text-sm text-slate-600">
-              <Mail size={14} className="text-slate-400" /> {supplier.email}
+          {supplier.contactPerson && (
+            <div className="text-sm text-slate-700">
+              <span className="text-slate-400 text-xs">{t('suppliers.contactPerson')}</span>
+              <div className="font-medium">{supplier.contactPerson}</div>
             </div>
           )}
           {supplier.phone && (
@@ -92,11 +94,48 @@ export default function SupplierDetail() {
               <Phone size={14} className="text-slate-400" /> {supplier.phone}
             </div>
           )}
-          {supplier.address && (
+          {supplier.email && (
             <div className="flex items-center gap-2 text-sm text-slate-600">
-              <MapPin size={14} className="text-slate-400" /> {supplier.address}
+              <Mail size={14} className="text-slate-400" /> {supplier.email}
             </div>
           )}
+          {supplier.address && (
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <MapPin size={14} className="text-slate-400" /> {supplier.address}{supplier.city ? `, ${supplier.city}` : ''}{supplier.country ? `, ${supplier.country}` : ''}
+            </div>
+          )}
+          {supplier.gstVatNumber && (
+            <div className="text-sm text-slate-700">
+              <span className="text-slate-400 text-xs">{t('suppliers.gstVatNumber')}</span>
+              <div className="font-medium">{supplier.gstVatNumber}</div>
+            </div>
+          )}
+          {supplier.taxRegistrationNo && (
+            <div className="text-sm text-slate-700">
+              <span className="text-slate-400 text-xs">{t('suppliers.taxRegistrationNo')}</span>
+              <div className="font-medium">{supplier.taxRegistrationNo}</div>
+            </div>
+          )}
+          {supplier.paymentTerms && (
+            <div className="text-sm text-slate-700">
+              <span className="text-slate-400 text-xs">{t('suppliers.paymentTerms')}</span>
+              <div className="font-medium">{supplier.paymentTerms}</div>
+            </div>
+          )}
+          <div className="text-sm text-slate-700">
+            <span className="text-slate-400 text-xs">{t('suppliers.currency')}</span>
+            <div className="font-medium">{supplier.currency}</div>
+          </div>
+          <div className="text-sm text-slate-700">
+            <span className="text-slate-400 text-xs">{t('suppliers.status')}</span>
+            <div>
+              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                supplier.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {supplier.status === 'active' ? t('suppliers.active') : t('suppliers.inactive')}
+              </span>
+            </div>
+          </div>
           {supplier.notes && (
             <div className="flex items-start gap-2 text-sm text-slate-600 sm:col-span-2 lg:col-span-3">
               <StickyNote size={14} className="text-slate-400 mt-0.5" /> {supplier.notes}

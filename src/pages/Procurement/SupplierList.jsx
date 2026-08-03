@@ -337,18 +337,26 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
   const { t } = useTranslation();
   const [form, setForm] = useState({
     name: supplier?.name || '',
+    companyName: supplier?.companyName || '',
     contactPerson: supplier?.contactPerson || '',
-    email: supplier?.email || '',
     phone: supplier?.phone || '',
+    email: supplier?.email || '',
     address: supplier?.address || '',
+    city: supplier?.city || '',
+    country: supplier?.country || '',
+    gstVatNumber: supplier?.gstVatNumber || '',
+    taxRegistrationNo: supplier?.taxRegistrationNo || '',
+    paymentTerms: supplier?.paymentTerms || '',
+    currency: supplier?.currency || 'USD',
+    status: supplier?.status || 'active',
     notes: supplier?.notes || '',
   });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error(t('suppliers.nameRequired'));
+    if (!form.name.trim() || !form.phone.trim()) {
+      toast.error(t('suppliers.nameAndPhoneRequired'));
       return;
     }
     setLoading(true);
@@ -370,61 +378,151 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-lg" onClick={(e) => e.stopPropagation()}>
-        <div className="px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-white rounded-xl w-full max-w-full sm:max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="px-4 sm:px-5 py-3 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white z-10">
           <h3 className="text-lg font-semibold">{supplier ? t('app.edit') : t('app.create')} {t('suppliers.supplier')}</h3>
           <button onClick={onClose} className="p-1 hover:bg-slate-100 rounded"><X size={18} /></button>
         </div>
-        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-3">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.name')} *</label>
-            <input
-              type="text"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t('suppliers.basicInfo')}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.name')} *</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.companyName')}</label>
+                <input
+                  type="text"
+                  value={form.companyName}
+                  onChange={(e) => setForm({ ...form, companyName: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.contactPerson')}</label>
+                <input
+                  type="text"
+                  value={form.contactPerson}
+                  onChange={(e) => setForm({ ...form, contactPerson: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.phone')} *</label>
+                <input
+                  type="text"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.email')}</label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.address')}</label>
+                <input
+                  type="text"
+                  value={form.address}
+                  onChange={(e) => setForm({ ...form, address: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.city')}</label>
+                <input
+                  type="text"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.country')}</label>
+                <input
+                  type="text"
+                  value={form.country}
+                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.contactPerson')}</label>
-              <input
-                type="text"
-                value={form.contactPerson}
-                onChange={(e) => setForm({ ...form, contactPerson: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.email')}</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t('suppliers.businessInfo')}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.gstVatNumber')}</label>
+                <input
+                  type="text"
+                  value={form.gstVatNumber}
+                  onChange={(e) => setForm({ ...form, gstVatNumber: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.taxRegistrationNo')}</label>
+                <input
+                  type="text"
+                  value={form.taxRegistrationNo}
+                  onChange={(e) => setForm({ ...form, taxRegistrationNo: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.paymentTerms')}</label>
+                <input
+                  type="text"
+                  value={form.paymentTerms}
+                  onChange={(e) => setForm({ ...form, paymentTerms: e.target.value })}
+                  placeholder="Net 30, Net 60..."
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.currency')}</label>
+                <select
+                  value={form.currency}
+                  onChange={(e) => setForm({ ...form, currency: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="AED">AED</option>
+                  <option value="SAR">SAR</option>
+                  <option value="INR">INR</option>
+                  <option value="PKR">PKR</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.status')}</label>
+                <select
+                  value={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="active">{t('suppliers.active')}</option>
+                  <option value="inactive">{t('suppliers.inactive')}</option>
+                </select>
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.phone')}</label>
-              <input
-                type="text"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.address')}</label>
-              <input
-                type="text"
-                value={form.address}
-                onChange={(e) => setForm({ ...form, address: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
+
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">{t('suppliers.notes')}</label>
             <textarea
