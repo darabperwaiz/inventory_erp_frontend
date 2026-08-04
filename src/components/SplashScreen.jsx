@@ -35,29 +35,18 @@ export default function SplashScreen({ onComplete }) {
 
     const totalLen = Math.max(...Array.from(pathEls).map(getTotalLength));
 
-    // Round 1: stroke draws along path
+    // Single continuous stroke draw: grow from 0 to full path length
     pathEls.forEach(el => {
       const len = getTotalLength(el);
-      el.style.strokeDasharray = `20 ${totalLen}`;
+      el.style.strokeDasharray = `0 ${len}`;
       el.style.strokeDashoffset = '0';
       el.animate([
-        { strokeDashoffset: '0' },
-        { strokeDashoffset: `${-len}` }
-      ], { duration: 2000, easing: 'ease-in-out', fill: 'forwards' });
+        { strokeDasharray: `0 ${len}` },
+        { strokeDasharray: `${len} 0` }
+      ], { duration: 3000, easing: 'ease-in-out', fill: 'forwards' });
     });
 
-    // Round 2: complete the full shape
-    const t1 = setTimeout(() => {
-      pathEls.forEach(el => {
-        const len = getTotalLength(el);
-        el.animate([
-          { strokeDasharray: `20 ${totalLen}` },
-          { strokeDasharray: `${len} 0` }
-        ], { duration: 1000, easing: 'ease-in-out', fill: 'forwards' });
-      });
-    }, 2100);
-
-    // Fill
+    // Fill after stroke completes
     const t2 = setTimeout(() => {
       pathEls.forEach(el => {
         const origFill = el.getAttribute('fill') || '#FAFAFA';
@@ -67,7 +56,7 @@ export default function SplashScreen({ onComplete }) {
           { fill: origFill }
         ], { duration: 800, easing: 'ease-out', fill: 'forwards' });
       });
-    }, 3300);
+    }, 3200);
 
     const t4 = setTimeout(() => {
       const overlay = svg.closest('.splash-overlay');
@@ -77,7 +66,6 @@ export default function SplashScreen({ onComplete }) {
     const t5 = setTimeout(() => onComplete(), 6000);
 
     return () => {
-      clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t4);
       clearTimeout(t5);
