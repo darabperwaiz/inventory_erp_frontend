@@ -356,7 +356,30 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [docFiles, setDocFiles] = useState([]);
   const [uploadingDoc, setUploadingDoc] = useState(false);
+  const [existingDocs, setExistingDocs] = useState(supplier?.documents || []);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (!supplier?._id) return;
+    supplierApi.getById(supplier._id).then(({ data }) => {
+      const s = data.data;
+      setForm({
+        name: s.name || '',
+        companyName: s.companyName || '',
+        contactPerson: s.contactPerson || '',
+        phone: s.phone || '',
+        email: s.email || '',
+        address: s.address || '',
+        city: s.city || '',
+        country: s.country || '',
+        gstVatNumber: s.gstVatNumber || '',
+        taxRegistrationNo: s.taxRegistrationNo || '',
+        status: s.status || 'active',
+        notes: s.notes || '',
+      });
+      setExistingDocs(s.documents || []);
+    }).catch(() => {});
+  }, [supplier?._id]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files || []);
@@ -370,12 +393,25 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
     setDocFiles((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const removeExistingDoc = async (doc) => {
+    if (!supplier?._id) return;
+    try {
+      await supplierApi.deleteDocument(supplier._id, doc._id);
+      setExistingDocs((prev) => prev.filter((d) => d._id !== doc._id));
+      toast.success(t('suppliers.documentDeleted'));
+    } catch {
+      toast.error(t('app.failed'));
+    }
+  };
+
   const uploadDocs = async (supplierId) => {
     if (docFiles.length === 0) return;
     setUploadingDoc(true);
     try {
       for (const file of docFiles) {
-        await supplierApi.uploadDocument(supplierId, file);
+        const formData = new FormData();
+        formData.append('document', file);
+        await supplierApi.uploadDocument(supplierId, formData);
       }
       setDocFiles([]);
     } catch {
@@ -543,6 +579,17 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
 
           <div>
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t('suppliers.documents')}</p>
+            {existingDocs.length > 0 && (
+              <div className="space-y-1 mb-3">
+                {existingDocs.map((doc) => (
+                  <div key={doc._id} className="flex items-center gap-2 bg-emerald-50 rounded px-2 py-1.5 text-xs border border-emerald-200">
+                    <FileText size={14} className="text-emerald-500 shrink-0" />
+                    <span className="truncate flex-1 text-emerald-700">{doc.name}</span>
+                    <button type="button" onClick={() => removeExistingDoc(doc)} className="text-red-400 hover:text-red-600 shrink-0"><X size={14} /></button>
+                  </div>
+                ))}
+              </div>
+            )}
             <div
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => e.preventDefault()}
