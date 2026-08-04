@@ -7,49 +7,19 @@ const LETTER_PATHS = [
   { fill: '#FAFAFA', d: 'M102.235 39.9439C101.323 39.9439 100.539 39.6227 99.8814 38.9802C99.2389 38.3228 98.9177 37.531 98.9177 36.6046C98.9177 35.6783 99.2389 34.8864 99.8814 34.229C100.539 33.5716 101.323 33.2429 102.235 33.2429C103.176 33.2429 103.968 33.5716 104.61 34.229C105.268 34.8864 105.596 35.6783 105.596 36.6046C105.596 37.531 105.268 38.3228 104.61 38.9802C103.968 39.6227 103.176 39.9439 102.235 39.9439Z' },
   { fill: '#FAFAFA', d: 'M86.797 20.4685C88.1716 20.4685 89.3519 20.7599 90.338 21.3426C91.3391 21.9253 92.1085 22.8217 92.6464 24.0319C93.1992 25.2421 93.4756 26.7885 93.4756 28.671V39.406H88.7468V29.5227C88.7468 27.7447 88.4928 26.3926 87.9848 25.4662C87.4918 24.5399 86.558 24.0767 85.1834 24.0767C84.4364 24.0767 83.7342 24.2784 83.0768 24.6818C82.4194 25.0852 81.889 25.6904 81.4856 26.4972C81.0971 27.289 80.9029 28.2975 80.9029 29.5227V39.406H76.4655V29.5227C76.4655 27.7447 76.1592 26.3926 75.5466 25.4662C74.949 24.5399 74.0525 24.0767 72.8573 24.0767C72.0953 24.0767 71.3931 24.271 70.7506 24.6594C70.1081 25.0479 69.5927 25.6455 69.2042 26.4523C68.8158 27.2591 68.6215 28.2826 68.6215 29.5227V39.406H63.8704V21.0064H68.6215V23.763C68.7859 23.2998 69.1519 22.8142 69.7197 22.3063C70.3024 21.7983 71.027 21.365 71.8936 21.0064C72.7601 20.6478 73.7089 20.4685 74.7398 20.4685C75.8604 20.4685 76.7867 20.6777 77.5188 21.096C78.2658 21.4995 78.856 22.0074 79.2893 22.62C79.7375 23.2326 80.0662 23.8452 80.2754 24.4577C80.4845 23.8452 80.888 23.2326 81.4856 22.62C82.0982 22.0074 82.8601 21.4995 83.7715 21.096C84.6829 20.6777 85.6914 20.4685 86.797 20.4685Z' },
   { fill: '#FAFAFA', d: 'M111.608 39.406V21.0064H116.381V39.406H111.608ZM114.051 15.4932C113.244 15.4932 112.549 15.2019 111.966 14.6192C111.399 14.0365 111.115 13.3418 111.115 12.535C111.115 11.7282 111.399 11.0334 111.966 10.4507C112.549 9.85308 113.244 9.55426 114.051 9.55426C114.588 9.55426 115.081 9.6962 115.53 9.98007C115.993 10.249 116.359 10.6076 116.628 11.0558C116.912 11.4891 117.054 11.9821 117.054 12.535C117.054 13.3418 116.762 14.0365 116.18 14.6192C115.597 15.2019 114.887 15.4932 114.051 15.4932Z' },
+  { fill: '#0047FF', d: 'M133.802 30.9H143.018V40.5895H133.802V30.9Z' },
   { fill: '#FAFAFA', d: 'M132.484 20.4685C133.724 20.4685 134.927 20.7225 136.092 21.2305C137.258 21.7385 138.214 22.5528 138.961 23.6733C139.723 24.779 140.104 26.2208 140.104 27.9987V39.406H135.286V28.8727C135.286 27.2143 134.89 25.9966 134.098 25.2197C133.321 24.4279 132.312 24.0319 131.072 24.0319C130.25 24.0319 129.466 24.2635 128.719 24.7267C127.972 25.1898 127.359 25.8174 126.881 26.6092C126.418 27.4011 126.187 28.3125 126.187 29.3434V39.406H121.391V21.0064H126.187V24.0992C126.321 23.5912 126.68 23.0608 127.262 22.508C127.86 21.9402 128.614 21.4621 129.526 21.0736C130.437 20.6702 131.423 20.4685 132.484 20.4685Z' }
 ];
 
 export default function SplashScreen({ onComplete }) {
   const svgRef = useRef(null);
-  const squareRef = useRef(null);
 
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
 
     const pathEls = svg.querySelectorAll('.draw-letter');
-    const squareEl = squareRef.current;
 
-    // Blue square: stroke-draw then fill
-    if (squareEl) {
-      squareEl.style.fill = 'transparent';
-      squareEl.style.stroke = '#0047FF';
-      squareEl.style.strokeWidth = '2';
-      squareEl.style.strokeDasharray = 'none';
-      squareEl.style.strokeDashoffset = '0';
-
-      try {
-        const sqLen = squareEl.getTotalLength();
-        squareEl.style.strokeDasharray = `0 ${sqLen * 2}`;
-        squareEl.animate([
-          { strokeDasharray: `0 ${sqLen * 2}`, strokeDashoffset: '0' },
-          { strokeDasharray: `${sqLen} ${sqLen}`, strokeDashoffset: '0' }
-        ], { duration: 2000, easing: 'ease-in-out', fill: 'forwards' });
-      } catch {}
-
-      setTimeout(() => {
-        if (squareEl) {
-          squareEl.style.stroke = 'transparent';
-          squareEl.animate([
-            { fill: 'rgba(0,71,255,0)' },
-            { fill: '#0047FF' }
-          ], { duration: 800, easing: 'ease-out', fill: 'forwards' });
-        }
-      }, 2500);
-    }
-
-    // Letter paths: stroke-draw then fill
     pathEls.forEach(el => {
       el.style.fill = 'transparent';
       el.style.stroke = '#FAFAFA';
@@ -90,7 +60,7 @@ export default function SplashScreen({ onComplete }) {
         const origFill = el.getAttribute('fill') || '#FAFAFA';
         el.style.stroke = 'transparent';
         el.animate([
-          { fill: 'rgba(250,250,250,0)' },
+          { fill: 'rgba(0,0,0,0)' },
           { fill: origFill }
         ], { duration: 800, easing: 'ease-out', fill: 'forwards' });
       });
@@ -116,21 +86,13 @@ export default function SplashScreen({ onComplete }) {
       <div className="flex flex-col items-center">
         <svg
           ref={svgRef}
-          viewBox="-4 0 162 51"
+          viewBox="0 0 154 51"
           className="w-[320px] h-[105px]"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect
-            ref={squareRef}
-            x="133.802"
-            y="30.9"
-            width="9.216"
-            height="9.6895"
-            rx="0"
-          />
           <g>
             {LETTER_PATHS.map((p, i) => (
-              <path key={i} className="draw-letter" d={p.d} />
+              <path key={i} className="draw-letter" d={p.d} fill={p.fill} />
             ))}
           </g>
         </svg>
