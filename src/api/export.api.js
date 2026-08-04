@@ -5,6 +5,7 @@ export const exportApi = {
   transactions: (format, params) => client.get(`/reports/export/transactions/${format}`, { params, responseType: 'blob' }),
   usage: (format) => client.get(`/reports/export/usage/${format}`, { responseType: 'blob' }),
   charts: () => client.get('/reports/charts'),
+  advancedReport: (format, type, params) => client.get(`/reports/export/advanced/${format}/${type}`, { params, responseType: 'blob' }),
 };
 
 export const downloadBlob = (response, filename) => {

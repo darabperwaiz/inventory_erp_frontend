@@ -530,7 +530,7 @@ function MaterialForm({ material, onClose, onSuccess }) {
     description: material?.description || '',
     manufacturer: material?.manufacturer || '',
     brand: material?.brand || '',
-    minimumStock: material?.minimumStock || 0,
+    minimumOrderQty: material?.minimumOrderQty || 0,
     status: material?.status || 'active',
     supplier: material?.supplier?._id || material?.supplier || '',
   });
@@ -613,8 +613,8 @@ function MaterialForm({ material, onClose, onSuccess }) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('inventory.minimumStock')}</label>
-                <input type="number" value={form.minimumStock} onChange={(e) => setForm({ ...form, minimumStock: Number(e.target.value) })}
+                <label className="block text-xs font-medium text-slate-600 mb-0.5">{t('suppliers.minOrderQty')}</label>
+                <input type="number" value={form.minimumOrderQty} onChange={(e) => setForm({ ...form, minimumOrderQty: Number(e.target.value) })}
                   className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none" />
               </div>
               <div>

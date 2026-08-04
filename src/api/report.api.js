@@ -13,4 +13,8 @@ export const reportApi = {
   getDailyTransactions: (params) => client.get('/reports/daily', { params }),
   getWeeklyTransactions: (params) => client.get('/reports/weekly', { params }),
   getMonthlyTransactions: (params) => client.get('/reports/monthly', { params }),
+  getAdvancedInventory: (params) => client.get('/reports/advanced/inventory', { params }),
+  getAdvancedProject: (params) => client.get('/reports/advanced/project', { params }),
+  getAdvancedSupplier: (params) => client.get('/reports/advanced/supplier', { params }),
+  getAdvancedCombined: (params) => client.get('/reports/advanced/combined', { params }),
 };

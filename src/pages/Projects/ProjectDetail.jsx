@@ -4,6 +4,7 @@ import { ArrowLeft, Package, Users, Calendar, MapPin, Plus, Wrench, RotateCcw, A
 import { projectApi } from '../../api/project.api';
 import { materialApi } from '../../api/material.api';
 import { fileApi } from '../../api/file.api';
+import { transactionApi } from '../../api/transaction.api';
 import { userApi } from '../../api/user.api';
 import { getAccessToken, API_BASE } from '../../api/client';
 import { approvalApi } from '../../api/approval.api';
@@ -244,6 +245,7 @@ export default function ProjectDetail() {
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.assigned')}</th>
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.installed')}</th>
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.returned')}</th>
+                    <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.transferred')}</th>
                     <th className="text-right px-4 py-3 font-medium text-slate-600">{t('projects.remaining')}</th>
                     <th className="text-left px-4 py-3 font-medium text-slate-600">{t('projects.receivedBy')}</th>
                     <th className="text-center px-4 py-3 font-medium text-slate-600">{t('app.status')}</th>
@@ -251,7 +253,7 @@ export default function ProjectDetail() {
                 </thead>
                 <tbody>
                   {materials.length === 0 ? (
-                    <tr><td colSpan="7" className="text-center py-8 text-slate-400">{t('projects.noMaterials')}</td></tr>
+                    <tr><td colSpan="8" className="text-center py-8 text-slate-400">{t('projects.noMaterials')}</td></tr>
                   ) : (
                     materials.map((pm) => {
                       const remaining = pm.assignedQuantity - pm.installedQuantity - pm.returnedQuantity - pm.transferredOutQuantity;
@@ -264,6 +266,7 @@ export default function ProjectDetail() {
                           <td className="px-4 py-3 text-right">{pm.assignedQuantity}</td>
                           <td className="px-4 py-3 text-right text-emerald-600">{pm.installedQuantity}</td>
                           <td className="px-4 py-3 text-right text-purple-600">{pm.returnedQuantity}</td>
+                          <td className="px-4 py-3 text-right text-cyan-600">{pm.transferredOutQuantity || 0}</td>
                           <td className="px-4 py-3 text-right font-medium">{remaining}</td>
                           <td className="px-4 py-3 text-sm text-slate-600">{pm.receivedBy?.name || '-'}</td>
                           <td className="px-4 py-3 text-center">
@@ -801,7 +804,6 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const { transactionApi } = await import('../../api/transaction.api');
       await transactionApi.recordTransfer({ ...form, sourceProjectId: projectId, quantity: Number(form.quantity) });
       toast.success(t('projects.transferRecorded'));
       onSuccess();

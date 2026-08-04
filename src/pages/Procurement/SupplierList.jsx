@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Truck, MoreVertical, Pencil, Trash2, X, Package, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Search, Truck, MoreVertical, Pencil, Trash2, X, Package, ChevronDown, ChevronUp, Upload, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useAuthStore from '../../store/authStore';
 import { supplierApi } from '../../api/supplier.api';
+import { API_BASE } from '../../api/client';
 import { useConfirm } from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 
@@ -60,8 +61,8 @@ export default function SupplierList() {
         setOpenDropdown(null);
       }
     };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
   }, []);
 
   const handleDelete = async (supplier) => {
@@ -353,6 +354,36 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
     notes: supplier?.notes || '',
   });
   const [loading, setLoading] = useState(false);
+  const [docFiles, setDocFiles] = useState([]);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setDocFiles((prev) => [...prev, ...files]);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const removeDocFile = (idx) => {
+    setDocFiles((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const uploadDocs = async (supplierId) => {
+    if (docFiles.length === 0) return;
+    setUploadingDoc(true);
+    try {
+      for (const file of docFiles) {
+        await supplierApi.uploadDocument(supplierId, file);
+      }
+      setDocFiles([]);
+    } catch {
+      toast.error(t('suppliers.uploadError'));
+    } finally {
+      setUploadingDoc(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -364,9 +395,11 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
     try {
       if (supplier) {
         await supplierApi.update(supplier._id, form);
+        await uploadDocs(supplier._id);
         toast.success(t('suppliers.updated'));
       } else {
-        await supplierApi.create(form);
+        const created = await supplierApi.create(form);
+        await uploadDocs(created.data._id);
         toast.success(t('suppliers.created'));
       }
       onSuccess();
@@ -507,6 +540,44 @@ function SupplierForm({ supplier, onClose, onSuccess }) {
               className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+
+          <div>
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">{t('suppliers.documents')}</p>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const files = Array.from(e.dataTransfer.files);
+                if (files.length) setDocFiles((prev) => [...prev, ...files]);
+              }}
+              className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-colors"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                className="hidden"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.png,.jpg,.jpeg,.txt"
+                onChange={handleFileChange}
+              />
+              <Upload size={20} className="mx-auto text-slate-400 mb-1" />
+              <p className="text-xs text-slate-500">{t('suppliers.dropFilesHere')}</p>
+            </div>
+            {docFiles.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {docFiles.map((file, idx) => (
+                  <div key={idx} className="flex items-center gap-2 bg-slate-50 rounded px-2 py-1 text-xs">
+                    <FileText size={14} className="text-slate-400 shrink-0" />
+                    <span className="truncate flex-1">{file.name}</span>
+                    <span className="text-slate-400 shrink-0">{(file.size / 1024).toFixed(0)} KB</span>
+                    <button type="button" onClick={() => removeDocFile(idx)} className="text-red-400 hover:text-red-600 shrink-0"><X size={14} /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
             <button
               type="button"
