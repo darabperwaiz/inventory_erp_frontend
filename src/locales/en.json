@@ -522,6 +522,11 @@
     "addMaterial": "Add Material / إضافة مادة",
     "materialCreated": "Material added / تمت إضافة المادة",
     "materialFieldsRequired": "Name, category and unit are required / الاسم والتصنيف والوحدة مطلوبة",
+    "documents": "Documents / المستندات",
+    "uploadDocument": "Upload / رفع",
+    "noDocuments": "No documents / لا توجد مستندات",
+    "documentUploaded": "Document uploaded / تم رفع المستند",
+    "documentDeleted": "Document deleted / تم حذف المستند",
     "price": "Price / السعر",
     "tax": "Tax / الضريبة",
     "minOrderQty": "Min Order Qty / الحد الأدنى للطلب"

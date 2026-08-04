@@ -12,4 +12,6 @@ export const supplierApi = {
   unassignMaterial: (id, materialId) => client.delete(`/suppliers/${id}/materials/${materialId}`),
   getUnassigned: () => client.get('/suppliers/unassigned'),
   addMaterial: (id, data) => client.post(`/suppliers/${id}/materials/add`, data),
+  uploadDocument: (id, formData) => client.post(`/suppliers/${id}/documents`, formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  deleteDocument: (id, docId) => client.delete(`/suppliers/${id}/documents/${docId}`),
 };

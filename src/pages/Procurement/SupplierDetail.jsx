@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, X, Trash2, Mail, Phone, MapPin, StickyNote } from 'lucide-react';
+import { ArrowLeft, Plus, X, Trash2, Mail, Phone, MapPin, StickyNote, FileText, Upload } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { supplierApi } from '../../api/supplier.api';
+import { API_BASE } from '../../api/client';
 import { useConfirm } from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 
@@ -47,6 +48,38 @@ export default function SupplierDetail() {
     try {
       await supplierApi.unassignMaterial(id, material._id);
       toast.success(t('suppliers.materialRemoved'));
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || t('suppliers.saveError'));
+    }
+  };
+
+  const handleDocUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('document', file);
+    try {
+      await supplierApi.uploadDocument(id, formData);
+      toast.success(t('suppliers.documentUploaded'));
+      fetchData();
+    } catch (err) {
+      toast.error(err.response?.data?.message || t('suppliers.saveError'));
+    }
+    e.target.value = '';
+  };
+
+  const handleDeleteDoc = async (doc) => {
+    const confirmed = await confirm(
+      `${t('app.delete')} "${doc.name}"?`,
+      t('app.confirm'),
+      null,
+      'danger'
+    );
+    if (!confirmed) return;
+    try {
+      await supplierApi.deleteDocument(id, doc._id);
+      toast.success(t('suppliers.documentDeleted'));
       fetchData();
     } catch (err) {
       toast.error(err.response?.data?.message || t('suppliers.saveError'));
@@ -186,6 +219,38 @@ export default function SupplierDetail() {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="px-5 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h2 className="font-semibold text-slate-800">{t('suppliers.documents')} ({supplier.documents?.length || 0})</h2>
+          <label className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 cursor-pointer">
+            <Upload size={14} /> {t('suppliers.uploadDocument')}
+            <input type="file" className="hidden" onChange={handleDocUpload} />
+          </label>
+        </div>
+        <div className="p-5">
+          {!supplier.documents || supplier.documents.length === 0 ? (
+            <p className="text-sm text-slate-400 text-center py-4">{t('suppliers.noDocuments')}</p>
+          ) : (
+            <div className="space-y-2">
+              {supplier.documents.map((doc) => (
+                <div key={doc._id} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50">
+                  <div className="flex items-center gap-3">
+                    <FileText size={18} className="text-blue-500" />
+                    <div>
+                      <a href={`${API_BASE}/${doc.path}`} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 hover:underline">{doc.name}</a>
+                      <div className="text-xs text-slate-400">{new Date(doc.uploadedAt).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                  <button onClick={() => handleDeleteDoc(doc)} className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

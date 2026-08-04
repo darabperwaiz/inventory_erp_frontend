@@ -672,9 +672,12 @@ function ReceiveMaterial({ onClose, onSuccess }) {
     });
   }, []);
 
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+
   const handleMaterialChange = (e) => {
     const materialId = e.target.value;
     const selected = materials.find((m) => m._id === materialId);
+    setSelectedMaterial(selected || null);
     setForm({
       ...form,
       materialId,
@@ -726,8 +729,11 @@ function ReceiveMaterial({ onClose, onSuccess }) {
                 onChange={(e) => setForm({ ...form, quantity: e.target.value })}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 required
-                min="1"
+                min={selectedMaterial?.minimumOrderQty || 1}
               />
+              {selectedMaterial?.minimumOrderQty > 0 && (
+                <p className="text-xs text-slate-400 mt-1">Min order: {selectedMaterial.minimumOrderQty} {selectedMaterial.unit}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">{t('inventory.receivedDate')}</label>
