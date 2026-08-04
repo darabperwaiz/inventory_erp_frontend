@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function NotFound() {
   useEffect(() => {
-    document.title = '404 Not Found | ERP System';
+    document.title = '404 Not Found | Warehouse';
   }, []);
 
   return (

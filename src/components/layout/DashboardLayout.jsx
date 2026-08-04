@@ -21,16 +21,16 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     const path = location.pathname;
-    let title = 'ERP System';
+    let title = 'Warehouse';
 
     if (routeTitles[path]) {
-      title = `${routeTitles[path]} | ERP System`;
+      title = `${routeTitles[path]} | Warehouse`;
     } else if (path.startsWith('/projects/')) {
-      title = 'Project Detail | ERP System';
+      title = 'Project Detail | Warehouse';
     } else if (path.match(/\/inventory\/[^/]+\/history/)) {
-      title = 'Material History | ERP System';
+      title = 'Material History | Warehouse';
     } else if (path.match(/\/procurement\/[^/]+/)) {
-      title = 'Supplier Detail | ERP System';
+      title = 'Supplier Detail | Warehouse';
     }
 
     document.title = title;

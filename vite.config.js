@@ -9,10 +9,10 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.png', 'icon-192x192.png', 'icon-512x512.png'],
+      includeAssets: ['favicon.png', 'icon.svg', 'icon-192x192.png', 'icon-512x512.png'],
       manifest: {
-        name: 'ERP Inventory & Project Management System',
-        short_name: 'ERP Inventory',
+        name: 'Dotcomdotin Warehouse',
+        short_name: 'Warehouse',
         description: 'Complete inventory control and project management for electrical contracting companies',
         theme_color: '#1E40AF',
         background_color: '#F1F5F9',

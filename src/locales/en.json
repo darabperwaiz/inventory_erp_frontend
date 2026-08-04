@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "ERP Inventory System / نظام إدارة المخزون",
+    "title": "Dotcomdotin Warehouse / مستودع دوتكوم دوت إن",
     "loading": "Loading... / جاري التحميل...",
     "save": "Save / حفظ",
     "cancel": "Cancel / إلغاء",
@@ -61,7 +61,7 @@
     "email": "Email / البريد الإلكتروني",
     "password": "Password / كلمة المرور",
     "loginTitle": "Sign in to your account / تسجيل الدخول إلى حسابك",
-    "loginSubtitle": "ERP Inventory & Project Management / إدارة المخزون والمشاريع",
+    "loginSubtitle": "Dotcomdotin Warehouse / مستودع دوتكوم دوت إن",
     "loginButton": "Sign In / تسجيل الدخول",
     "loginError": "Invalid email or password / بريد إلكتروني أو كلمة مرور غير صحيحة",
     "welcomeBack": "Welcome back / مرحباً بعودتك",

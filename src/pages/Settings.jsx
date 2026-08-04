@@ -48,7 +48,7 @@ export default function Settings() {
 function GeneralSettings() {
   const { t } = useTranslation();
   const [settings, setSettings] = useState({
-    companyName: 'ERP Inventory System',
+    companyName: 'Dotcomdotin Warehouse',
     currency: 'OMR',
     timezone: 'Asia/Muscat',
     lowStockThreshold: 10,

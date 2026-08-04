@@ -46,7 +46,13 @@ export default function Sidebar() {
         }`}
       >
         <div className="flex items-center justify-between p-4 border-b border-slate-700">
-          {!collapsed && <span className="text-lg font-bold tracking-tight">ERP System</span>}
+          {!collapsed && (
+            <div className="flex items-center gap-2">
+              <img src="/icon.svg" alt="Logo" className="w-7 h-7 rounded" />
+              <span className="text-lg font-bold tracking-tight">Warehouse</span>
+            </div>
+          )}
+          {collapsed && <img src="/icon.svg" alt="Logo" className="w-7 h-7 rounded mx-auto" />}
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-1 rounded hover:bg-slate-700 text-slate-400"

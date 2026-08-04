@@ -10,7 +10,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    document.title = 'Login | ERP System';
+    document.title = 'Login | Warehouse';
   }, []);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

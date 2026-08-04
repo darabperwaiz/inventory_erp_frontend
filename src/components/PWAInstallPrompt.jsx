@@ -57,7 +57,7 @@ export default function PWAInstallPrompt() {
             <Smartphone size={24} className="text-white" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-800">Install ERP Inventory</h3>
+            <h3 className="text-base font-bold text-slate-800">Install Warehouse</h3>
             <p className="text-xs text-slate-500">تثبيت نظام إدارة المخزون</p>
           </div>
         </div>
