@@ -9,7 +9,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.png', 'icon.svg', 'icon-192x192.png', 'icon-512x512.png'],
+      includeAssets: ['favicon.webp', 'brand-logo.svg', 'logo-192px.png', 'logo-512px.png'],
       manifest: {
         name: 'Dotcomdotin Warehouse',
         short_name: 'Warehouse',
@@ -25,13 +25,13 @@ export default defineConfig({
         dir: 'ltr',
         icons: [
           {
-            src: 'icon-192x192.png',
+            src: 'logo-192px.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any maskable'
           },
           {
-            src: 'icon-512x512.png',
+            src: 'logo-512px.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
