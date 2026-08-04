@@ -18,6 +18,7 @@ import { approvalApi } from '../api/approval.api';
 import useAuthStore from '../store/authStore';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 const COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#06b6d4', '#ef4444', '#ec4899'];
 
@@ -60,6 +61,17 @@ function AdminDashboard() {
     window.addEventListener('app:refresh', handler);
     return () => window.removeEventListener('app:refresh', handler);
   }, []);
+
+  useEffect(() => {
+    if (lowStock.length > 0) {
+      const names = lowStock.slice(0, 3).map(m => m.name).join(', ');
+      const more = lowStock.length > 3 ? ` and ${lowStock.length - 3} more` : '';
+      toast.error(`Low stock alert: ${names}${more}`, {
+        duration: 5000,
+        icon: '⚠️',
+      });
+    }
+  }, [lowStock]);
 
   if (loading) return <div className="text-center py-8 text-slate-400">{t('app.loading')}</div>;
 

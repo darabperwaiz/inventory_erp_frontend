@@ -59,6 +59,20 @@ export default function MaterialList() {
   }, [page, search]);
 
   useEffect(() => {
+    if (materials.length > 0) {
+      const lowStock = materials.filter(m => m.availableQuantity <= m.minimumStock && m.minimumStock > 0);
+      if (lowStock.length > 0) {
+        const names = lowStock.slice(0, 3).map(m => m.name).join(', ');
+        const more = lowStock.length > 3 ? ` and ${lowStock.length - 3} more` : '';
+        toast.error(`Low stock alert: ${names}${more}`, {
+          duration: 5000,
+          icon: '⚠️',
+        });
+      }
+    }
+  }, [materials]);
+
+  useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setOpenDropdown(null);
     };
