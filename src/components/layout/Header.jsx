@@ -39,8 +39,13 @@ export default function Header() {
 
   useEffect(() => {
     fetchUnread();
-    const interval = setInterval(fetchUnread, 30000);
-    return () => clearInterval(interval);
+    const interval = setInterval(fetchUnread, 5000);
+    const refreshHandler = () => fetchUnread();
+    window.addEventListener('app:refresh-notifications', refreshHandler);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('app:refresh-notifications', refreshHandler);
+    };
   }, []);
 
   useEffect(() => {

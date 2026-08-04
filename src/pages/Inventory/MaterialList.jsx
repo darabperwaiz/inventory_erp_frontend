@@ -453,6 +453,7 @@ function AdjustStockModal({ material, onClose, onSuccess }) {
     try {
       await materialApi.adjust({ materialId: material._id, quantity: Number(form.quantity), adjustmentType: form.adjustmentType, reason: finalReason });
       toast.success(t(form.adjustmentType === 'increase' ? 'inventory.stockIncreased' : 'inventory.stockDecreased'));
+      window.dispatchEvent(new CustomEvent('app:refresh-notifications'));
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('inventory.adjustmentError'));
@@ -691,6 +692,7 @@ function ReceiveMaterial({ onClose, onSuccess }) {
     try {
       await materialApi.receive({ ...form, quantity: Number(form.quantity) });
       toast.success(t('inventory.materialReceived'));
+      window.dispatchEvent(new CustomEvent('app:refresh-notifications'));
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('inventory.receiveError'));

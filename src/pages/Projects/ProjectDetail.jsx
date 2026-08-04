@@ -518,6 +518,7 @@ function AssignMaterialModal({ projectId, onClose, onSuccess }) {
     try {
       await projectApi.assignMaterial({ ...form, projectId, quantity: Number(form.quantity) });
       toast.success(t('projects.materialAssigned'));
+      window.dispatchEvent(new CustomEvent('app:refresh-notifications'));
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('app.failed'));
@@ -599,6 +600,7 @@ function InstallModal({ projectId, materials, onClose, onSuccess }) {
       const { transactionApi } = await import('../../api/transaction.api');
       await transactionApi.recordInstallation({ ...form, installedQuantity: Number(form.installedQuantity) });
       toast.success(t('projects.installationRecorded'));
+      window.dispatchEvent(new CustomEvent('app:refresh-notifications'));
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('app.failed'));
@@ -690,6 +692,7 @@ function ReturnModal({ projectId, materials, onClose, onSuccess }) {
       const { transactionApi } = await import('../../api/transaction.api');
       await transactionApi.recordReturn({ ...form, quantity: Number(form.quantity) });
       toast.success(t('projects.returnRecorded'));
+      window.dispatchEvent(new CustomEvent('app:refresh-notifications'));
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('app.failed'));
@@ -796,6 +799,7 @@ function TransferModal({ projectId, materials, onClose, onSuccess }) {
     try {
       await transactionApi.recordTransfer({ ...form, sourceProjectId: projectId, quantity: Number(form.quantity) });
       toast.success(t('projects.transferRecorded'));
+      window.dispatchEvent(new CustomEvent('app:refresh-notifications'));
       onSuccess();
     } catch (err) {
       toast.error(err.response?.data?.message || t('app.failed'));
