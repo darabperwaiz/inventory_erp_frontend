@@ -5,6 +5,7 @@ import useAuthStore from './store/authStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import PWAUpdatePrompt from './components/PWAUpdatePrompt';
 import SplashScreen from './components/SplashScreen';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -41,10 +42,10 @@ function App() {
   }
 
   return (
+    <>
     <BrowserRouter>
       {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
       <Toaster position="top-right" />
-      <PWAInstallPrompt />
       <div>
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -107,6 +108,9 @@ function App() {
       </Routes>
       </div>
     </BrowserRouter>
+    <PWAInstallPrompt />
+    <PWAUpdatePrompt />
+    </>
   );
 }
 
